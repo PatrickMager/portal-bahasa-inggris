@@ -253,16 +253,7 @@ html {
    LOW-END DEVICE & 60FPS SCROLL ACCELERATION (HP RAM 2GB)
    ======================================================== */
 
-/* Virtualisasi Render: Elemen di luar layar ditunda proses layoutnya */
-.virtual-render {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 420px;
-}
 
-/* Optimasi Decode Gambar Asynchronous */
-img {
-    content-visibility: auto;
-}
 
 /* Aturan Khusus Layar Mobile & GPU Hemat Daya */
 @media (max-width: 768px) {
