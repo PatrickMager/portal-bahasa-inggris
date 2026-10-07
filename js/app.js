@@ -282,11 +282,12 @@
                 this.darkMode = !this.darkMode;
                 if (this.darkMode) {
                     document.documentElement.classList.add('dark');
-                    localStorage.theme = 'dark';
                 } else {
                     document.documentElement.classList.remove('dark');
-                    localStorage.theme = 'light';
                 }
+                try {
+                    localStorage.theme = this.darkMode ? 'dark' : 'light';
+                } catch (e) {}
             },
 
             // Init
@@ -433,11 +434,12 @@
                 this.darkMode = !this.darkMode;
                 if (this.darkMode) {
                     document.documentElement.classList.add('dark');
-                    localStorage.theme = 'dark';
                 } else {
                     document.documentElement.classList.remove('dark');
-                    localStorage.theme = 'light';
                 }
+                try {
+                    localStorage.theme = this.darkMode ? 'dark' : 'light';
+                } catch (e) {}
             },
 
             async init() {
@@ -578,11 +580,12 @@
                 this.darkMode = !this.darkMode;
                 if (this.darkMode) {
                     document.documentElement.classList.add('dark');
-                    localStorage.theme = 'dark';
                 } else {
                     document.documentElement.classList.remove('dark');
-                    localStorage.theme = 'light';
                 }
+                try {
+                    localStorage.theme = this.darkMode ? 'dark' : 'light';
+                } catch (e) {}
             },
 
             async init() {
