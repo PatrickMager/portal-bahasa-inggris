@@ -11,18 +11,5 @@
             "logo_sekolah": "",
             "link_sekolah": "https:\/\/sman1jakenan.sch.id"
         }
-    },
-    {
-        "id": "std_003",
-        "nama_lengkap": "Febrian alfarizzi",
-        "nim": "2024010002",
-        "deskripsi": "",
-        "foto_profil": "std_003_profile_1791386762.jpg",
-        "history_sekolah": {
-            "nama_sekolah": "",
-            "link_sekolah": "",
-            "deskripsi_sekolah": "",
-            "logo_sekolah": "std_003_school_1791136989.jpeg"
-        }
     }
 ]
