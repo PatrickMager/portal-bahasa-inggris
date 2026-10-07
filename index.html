@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universitas Negeri Yogyakarta - Dashboard Tugas &amp; Mahasiswa</title>
+
+    <!-- Favicon Diambilkan dari Logo Website yang Diupload -->
+    <link rel="icon" id="dynamic-favicon" type="image/png" href="uploads/images/web_logo_1790876671.png">
+    <link rel="apple-touch-icon" id="dynamic-apple-favicon" href="uploads/images/web_logo_1790876671.png">
+    <script>
+        (function() {
+            try {
+                var cached = localStorage.getItem('site_settings');
+                if (cached) {
+                    var s = JSON.parse(cached);
+                    if (s && s.web_logo) {
+                        var l1 = document.getElementById('dynamic-favicon');
+                        var l2 = document.getElementById('dynamic-apple-favicon');
+                        var url = 'uploads/images/' + s.web_logo;
+                        if (l1) l1.href = url;
+                        if (l2) l2.href = url;
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- Script Pencegah Flashbang Mode Gelap -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '420px',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            750: '#233047',
+                            850: '#172033',
+                            950: '#0b1120'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js?v=4.0"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body x-data="landingApp()" class="bg-slate-50 dark:bg-[#0f172a] font-sans text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-300">
+    <!-- Progress Bar Indikator Animasi Navigasi -->
+    <div id="nav-progress-bar"></div>
+    
+    <!-- NAVBAR ATAS -->
+    <nav class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-[#0f172a]/90 border-b border-slate-200/70 dark:border-slate-800/90 shadow-2xs transition-colors duration-300">
+        <div class="w-full max-w-[96%] 2xl:max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-2 sm:gap-4">
+                
+                <!-- SISI KIRI: Tombol Garis 3 (Tab/Mobile) + Logo Brand -->
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
+                    <!-- Button Navigasi Garis 3 (lg:hidden) -->
+                    <button @click="mobileMenuOpen = true" 
+                            type="button"
+                            class="lg:hidden p-2 -ml-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden transition cursor-pointer flex-shrink-0"
+                            aria-label="Buka Menu Navigasi">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
+                        </svg>
+                    </button>
+
+                    <!-- Logo Brand -->
+                    <a href="index.html" class="flex items-center gap-2 sm:gap-2.5 group min-w-0 flex-1 lg:flex-initial">
+                        <template x-if="settings.web_logo">
+                            <img :src="getLogoUrl(settings.web_logo)" 
+                                 :alt="settings.web_title" 
+                                 class="w-8 h-8 rounded-xl object-cover shadow-xs border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform flex-shrink-0"
+                                 decoding="async">
+                        </template>
+                        <template x-if="!settings.web_logo">
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center font-black text-xs shadow-xs flex-shrink-0">
+                                EN
+                            </div>
+                        </template>
+                        <span class="font-extrabold text-xs xs:text-sm sm:text-base lg:text-lg text-slate-800 dark:text-white tracking-tight truncate min-w-0 flex-1 lg:flex-initial max-w-full lg:max-w-[260px] xl:max-w-none" :title="settings.web_title || 'EngSpace'" x-text="settings.web_title || 'EngSpace'"></span>
+                    </a>
+                </div>
+
+                <!-- SISI KANAN: Menu Navigasi Desktop + TOMBOL DARK MODE -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    
+                    <!-- Menu Desktop (hidden lg:flex) -->
+                    <div class="hidden lg:flex items-center gap-2">
+                        <!-- Kolom Beranda -->
+                        <a href="index.html" 
+                           class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] active:scale-95 flex items-center gap-1.5 flex-shrink-0 border shadow-2xs bg-indigo-50/80 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-slate-600">
+                            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] flex-shrink-0 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+                                </svg>
+                            </span>
+                            <span>Beranda</span>
+                        </a>
+
+                        <!-- DAFTAR NAMA-NAMA MAHASISWA -->
+                        <template x-for="ns in students" :key="ns.id">
+                            <a :href="'detail.html?id=' + encodeURIComponent(ns.id)"
+                               class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] active:scale-95 flex items-center gap-1.5 flex-shrink-0 border shadow-2xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/70 dark:hover:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 hover:border-indigo-200 dark:hover:border-slate-600">
+                                <span class="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center text-[10px] flex-shrink-0 transition-colors border border-slate-200/60 dark:border-slate-700">
+                                    <template x-if="ns.foto_profil">
+                                        <img :src="getLogoUrl(ns.foto_profil)" :alt="ns.nama_lengkap" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                    </template>
+                                    <template x-if="!ns.foto_profil">
+                                        <span class="w-full h-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center" x-text="ns.nama_lengkap ? ns.nama_lengkap.charAt(0).toUpperCase() : 'M'"></span>
+                                    </template>
+                                </span>
+                                <span class="truncate max-w-[140px]" x-text="ns.nama_lengkap"></span>
+                            </a>
+                        </template>
+
+                        <!-- Kolom Tugas Kelompok -->
+                        <a href="group_tasks.html" 
+                           class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] active:scale-95 flex items-center gap-1.5 flex-shrink-0 border shadow-2xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/70 dark:hover:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 hover:border-indigo-200 dark:hover:border-slate-600">
+                            <span class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-[10px] flex-shrink-0 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                                </svg>
+                            </span>
+                            <span>Tugas Kelompok</span>
+                        </a>
+                    </div>
+
+                    <!-- Divider khusus desktop -->
+                    <div class="hidden lg:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+                    <!-- TOMBOL DARK MODE -->
+                    <button @click="toggleTheme()" 
+                            type="button"
+                            class="p-2 sm:p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:text-indigo-600 dark:hover:text-amber-300 border border-slate-200/80 dark:border-slate-700/80 transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 active:scale-95 flex items-center justify-center"
+                            :title="darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'"
+                            aria-label="Toggle Dark Mode">
+                        
+                        <svg x-cloak x-show="!darkMode" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/>
+                        </svg>
+
+                        <svg x-cloak x-show="darkMode" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
+                        </svg>
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- OFF-CANVAS DRAWER MENU (Tablet & Mobile: lg:hidden) -->
+    <div x-cloak 
+         @keydown.escape.window="mobileMenuOpen = false"
+         class="fixed inset-0 z-[100] lg:hidden transition-[visibility] duration-350"
+         :class="mobileMenuOpen ? 'visible pointer-events-auto' : 'invisible pointer-events-none delay-350'"
+         aria-modal="true" 
+         role="dialog">
+
+        <!-- Backdrop Gelap -->
+        <div @click="mobileMenuOpen = false"
+             class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm drawer-fade-backdrop cursor-pointer"
+             :class="mobileMenuOpen ? 'backdrop-open' : ''"></div>
+
+        <!-- Drawer Sidebar -->
+        <div class="fixed inset-y-0 left-0 w-[86vw] max-w-[340px] sm:w-[400px] sm:max-w-md bg-white dark:bg-[#0f172a] shadow-2xl z-10 flex flex-col h-full border-r border-slate-200 dark:border-slate-800 drawer-slide-panel"
+             :class="mobileMenuOpen ? 'drawer-open shadow-2xl' : 'shadow-none'">
+            
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0f172a] flex-shrink-0">
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <template x-if="settings.web_logo">
+                        <img :src="getLogoUrl(settings.web_logo)" 
+                             :alt="settings.web_title" 
+                             class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover shadow-xs border border-slate-200 dark:border-slate-700">
+                    </template>
+                    <template x-if="!settings.web_logo">
+                        <div class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-emerald-500 text-white shadow-xs">
+                            <span class="font-bold text-xs">EN</span>
+                        </div>
+                    </template>
+                    <div>
+                        <span class="font-extrabold text-base sm:text-lg text-slate-800 dark:text-white tracking-tight" x-text="settings.web_title || 'EngSpace'"></span>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-400" x-text="settings.web_subtitle || 'Portal Tugas & Portofolio'"></p>
+                    </div>
+                </div>
+                <!-- Tombol Tutup X -->
+                <button @click="mobileMenuOpen = false" 
+                        type="button" 
+                        class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                        aria-label="Tutup Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Drawer Body -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 sm:space-y-6">
+                <!-- Nav Link: Beranda Utama -->
+                <div>
+                    <a href="index.html" 
+                       @click="mobileMenuOpen = false"
+                       class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-bold text-sm transition border shadow-2xs bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-slate-600">
+                        <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+                            </svg>
+                        </div>
+                        <span class="flex-1 font-bold">Beranda Utama</span>
+                        <span class="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400"></span>
+                    </a>
+                </div>
+
+                <!-- Group: Profil Mahasiswa -->
+                <div>
+                    <div class="flex items-center justify-between px-1 mb-2.5">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            Anggota Mahasiswa (<span x-text="students.length"></span>)
+                        </span>
+                        <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-900">
+                            Pilih Profil
+                        </span>
+                    </div>
+                    <div class="space-y-2">
+                        <template x-for="ns in students" :key="ns.id">
+                            <a :href="'detail.html?id=' + encodeURIComponent(ns.id)" 
+                               @click="mobileMenuOpen = false"
+                               class="flex items-center gap-3 p-3 rounded-2xl text-xs font-semibold transition border shadow-2xs group bg-white dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700/60 border-slate-200/80 dark:border-slate-700/60">
+                                <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 shadow-2xs border border-slate-200/60 dark:border-slate-700/80">
+                                    <template x-if="ns.foto_profil">
+                                        <img :src="getLogoUrl(ns.foto_profil)" :alt="ns.nama_lengkap" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                    </template>
+                                    <template x-if="!ns.foto_profil">
+                                        <div class="w-full h-full bg-indigo-100 dark:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center text-xs" x-text="ns.nama_lengkap ? ns.nama_lengkap.charAt(0).toUpperCase() : 'M'"></div>
+                                    </template>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-slate-800 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" x-text="ns.nama_lengkap"></p>
+                                    <p class="text-[10px] text-slate-400 font-mono mt-0.5 truncate" x-text="'NIM: ' + ns.nim"></p>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                                </svg>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Group: Arsip Berkas -->
+                <div>
+                    <div class="px-1 mb-2.5">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Arsip Berkas</span>
+                    </div>
+                    <a href="group_tasks.html" 
+                       @click="mobileMenuOpen = false"
+                       class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-bold text-sm transition border shadow-2xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/60">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                            </svg>
+                        </div>
+                        <span class="flex-1 font-bold">Tugas Kelompok</span>
+                        <span class="text-xs font-bold text-slate-400 font-mono" x-text="groupTasks.length + ' Berkas'"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Drawer Footer -->
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                <p class="text-[11px] text-slate-400 text-center font-medium" x-text="settings.web_title"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="flex-1 w-full min-w-0 max-w-full page-enter-active transition-all duration-200">
+        
+        <!-- HERO SECTION DUA KOLOM -->
+        <section class="relative overflow-hidden bg-gradient-to-br from-indigo-50/70 via-slate-50 to-emerald-50/40 dark:from-[#0f172a] dark:via-[#131c2e] dark:to-[#0f172a] pt-8 pb-5 sm:pt-12 sm:pb-8 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+            <!-- Glow Background Blobs -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                <div class="absolute -top-32 -left-20 w-96 h-96 bg-indigo-200/30 dark:bg-indigo-600/10 rounded-full blur-3xl"></div>
+                <div class="absolute top-10 -right-20 w-96 h-96 bg-emerald-200/30 dark:bg-emerald-600/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div class="relative w-full sm:max-w-[96%] 2xl:max-w-[96%] mx-auto px-3.5 sm:px-6 lg:px-8 min-w-0">
+                <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full min-w-0">
+                    
+                    <!-- KOLOM KIRI (7 Kolom): Judul, Deskripsi & Statistik -->
+                    <div class="lg:col-span-7 text-left w-full min-w-0">
+                        <!-- Badge Atas -->
+                        <div class="inline-flex items-center gap-2 max-w-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-indigo-700 dark:text-indigo-300 text-[11px] sm:text-xs font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-5 sm:mb-6 border border-indigo-100 dark:border-slate-700 shadow-2xs transition-colors duration-300">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
+                            <span class="truncate min-w-0" x-text="settings.web_badge || 'English Academic Workspace • Portal Mahasiswa'"></span>
+                        </div>
+
+                        <h1 class="text-xl xs:text-2xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-[3.75rem] font-black text-slate-800 dark:text-white tracking-tight leading-[1.12] mb-3 sm:mb-5 break-words">
+                            <span class="block sm:inline-block max-w-full break-words" x-text="settings.web_tagline || 'Dashboard Tugas & Portofolio'"></span>
+                            <span class="bg-gradient-to-r from-indigo-600 via-blue-600 to-emerald-500 dark:from-indigo-400 dark:via-blue-400 dark:to-emerald-400 bg-clip-text text-transparent block sm:inline-block max-w-full break-words" x-text="settings.web_subtitle || 'Kelompok Bahasa Inggris'"></span>
+                        </h1>
+
+                        <p class="text-sm sm:text-base lg:text-lg 2xl:text-xl text-slate-600 dark:text-slate-300 leading-relaxed mb-6 sm:mb-8 max-w-3xl 2xl:max-w-4xl font-normal break-words" x-text="settings.web_description || 'Platform kolaborasi tugas dan portofolio akademik mahasiswa.'"></p>
+
+                        <!-- STATISTIK HERO (3 KARTU SEJAJAR PENUH) -->
+                        <div class="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-4 lg:gap-6 w-full min-w-0">
+                            
+                            <!-- Card 1: Mahasiswa -->
+                            <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-1.5 xs:p-2 sm:p-4 lg:p-5 2xl:p-7 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors duration-300 flex flex-col justify-between min-w-0 overflow-hidden text-center sm:text-left">
+                                <div class="flex items-center justify-center sm:justify-start min-w-0">
+                                    <p class="stat-hero-title text-slate-400 dark:text-slate-400 truncate whitespace-nowrap" title="Mahasiswa">Mahasiswa</p>
+                                </div>
+                                <div class="py-1.5 sm:py-3 lg:py-4 flex items-center justify-center sm:justify-start min-h-[34px] sm:min-h-[50px] lg:min-h-[66px] 2xl:min-h-[82px] min-w-0">
+                                    <div class="whitespace-nowrap inline-flex items-baseline justify-center sm:justify-start gap-1 sm:gap-1.5 2xl:gap-2 min-w-0">
+                                        <span class="stat-hero-number text-slate-800 dark:text-white" x-text="students.length"></span>
+                                        <span class="stat-hero-unit text-slate-400 dark:text-slate-400">Orang</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-center sm:justify-start min-w-0">
+                                    <p class="stat-hero-sub text-indigo-600 dark:text-indigo-400 truncate whitespace-nowrap" title="Terdaftar di Tim">
+                                        <span class="hidden sm:inline">Terdaftar di Tim</span>
+                                        <span class="sm:hidden">Terdaftar</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Tugas Terkumpul -->
+                            <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-1.5 xs:p-2 sm:p-4 lg:p-5 2xl:p-7 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors duration-300 flex flex-col justify-between min-w-0 overflow-hidden text-center sm:text-left">
+                                <div class="flex items-center justify-center sm:justify-start min-w-0">
+                                    <p class="stat-hero-title text-slate-400 dark:text-slate-400 truncate whitespace-nowrap" title="Tugas Terkumpul">
+                                        <span class="hidden sm:inline">Tugas Terkumpul</span>
+                                        <span class="sm:hidden">Tugas</span>
+                                    </p>
+                                </div>
+                                <div class="py-1.5 sm:py-3 lg:py-4 flex items-center justify-center sm:justify-start min-h-[34px] sm:min-h-[50px] lg:min-h-[66px] 2xl:min-h-[82px] min-w-0">
+                                    <div class="whitespace-nowrap inline-flex items-baseline justify-center sm:justify-start gap-1 sm:gap-1.5 2xl:gap-2 min-w-0">
+                                        <span class="stat-hero-number text-slate-800 dark:text-white" x-text="totalTasks"></span>
+                                        <span class="stat-hero-unit text-slate-400 dark:text-slate-400">Berkas</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-center sm:justify-start min-w-0">
+                                    <p class="stat-hero-sub text-emerald-600 dark:text-emerald-400 truncate whitespace-nowrap" title="Terkumpul">
+                                        Terkumpul
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Status Web -->
+                            <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-1.5 xs:p-2 sm:p-4 lg:p-5 2xl:p-7 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors duration-300 flex flex-col justify-between min-w-0 overflow-hidden text-center sm:text-left">
+                                <div class="flex items-center justify-center sm:justify-start min-w-0">
+                                    <p class="stat-hero-title text-slate-400 dark:text-slate-400 truncate whitespace-nowrap" title="Status Web">
+                                        <span class="hidden sm:inline">Status Web</span>
+                                        <span class="sm:hidden">Status</span>
+                                    </p>
+                                </div>
+                                <div class="py-1.5 sm:py-3 lg:py-4 flex items-center justify-center sm:justify-start min-h-[34px] sm:min-h-[50px] lg:min-h-[66px] 2xl:min-h-[82px] min-w-0">
+                                    <div class="whitespace-nowrap inline-flex items-center justify-center sm:justify-start gap-1 sm:gap-2 2xl:gap-3 min-w-0">
+                                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 lg:w-3 lg:h-3 2xl:w-4 2xl:h-4 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                        <span class="stat-hero-number text-emerald-600 dark:text-emerald-400">Aktif</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-center sm:justify-start min-w-0">
+                                    <p class="stat-hero-sub text-slate-400 dark:text-slate-400 truncate whitespace-nowrap" :title="settings.tahun_akademik ? ('Tahun Ajaran ' + settings.tahun_akademik) : 'Semester Ini'">
+                                        <span class="hidden sm:inline" x-text="settings.tahun_akademik ? ('T.A. ' + settings.tahun_akademik) : 'Semester Ini'"></span>
+                                        <span class="sm:hidden" x-text="settings.tahun_akademik ? ('T.A. ' + settings.tahun_akademik) : 'Sem. Ini'"></span>
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- KOLOM KANAN (5 Kolom): Card Informasi Tim & Proyek -->
+                    <div class="lg:col-span-5 w-full min-w-0">
+                        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl p-3.5 xs:p-4 sm:p-7 xl:p-9 border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative transition-colors duration-300 w-full min-w-0">
+                            <!-- Header Card -->
+                            <div class="flex items-center justify-between gap-2.5 pb-3.5 mb-3.5 border-b border-slate-100 dark:border-slate-700/70 min-w-0">
+                                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                    <template x-if="settings.web_logo">
+                                        <img :src="getLogoUrl(settings.web_logo)" 
+                                             :alt="settings.web_title" 
+                                             class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover shadow-xs border border-slate-200 dark:border-slate-700 flex-shrink-0">
+                                    </template>
+                                    <template x-if="!settings.web_logo">
+                                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs flex-shrink-0">
+                                            EN
+                                        </div>
+                                    </template>
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="text-xs sm:text-sm 2xl:text-base font-bold text-slate-800 dark:text-white truncate" x-text="settings.web_title || 'Informasi Kelompok'"></h3>
+                                        <p class="text-[10px] sm:text-[11px] text-slate-400 truncate" x-text="settings.mata_kuliah || 'Mata Kuliah Bahasa Inggris'"></p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border border-emerald-100 dark:border-emerald-800/50 whitespace-nowrap flex-shrink-0">
+                                    Terverifikasi
+                                </span>
+                            </div>
+
+                            <!-- List Detail Proyek -->
+                            <div class="space-y-2 sm:space-y-2.5 mb-3.5">
+                                <div class="flex items-center justify-between gap-2 p-2 sm:p-2.5 sm:px-3 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 min-w-0">
+                                    <span class="text-slate-400 font-medium flex-shrink-0 text-[11px] sm:text-xs">Program Studi:</span>
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right truncate min-w-0 text-[11px] sm:text-xs" x-text="settings.program_studi || 'Teknik Elektro'"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 p-2 sm:p-2.5 sm:px-3 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 min-w-0">
+                                    <span class="text-slate-400 font-medium flex-shrink-0 text-[11px] sm:text-xs">Kelas:</span>
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right truncate min-w-0 text-[11px] sm:text-xs" x-text="settings.kelas || 'Kelas B'"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 p-2 sm:p-2.5 sm:px-3 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 min-w-0">
+                                    <span class="text-slate-400 font-medium flex-shrink-0 text-[11px] sm:text-xs">Mata Kuliah:</span>
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right truncate min-w-0 text-[11px] sm:text-xs" x-text="settings.mata_kuliah || 'Bahasa Inggris'"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 p-2 sm:p-2.5 sm:px-3 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 min-w-0">
+                                    <span class="text-slate-400 font-medium flex-shrink-0 text-[11px] sm:text-xs">Topik Utama:</span>
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right truncate min-w-0 text-[11px] sm:text-xs" x-text="settings.topik_utama || 'Presentation & Academic Essay'"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 p-2 sm:p-2.5 sm:px-3 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 min-w-0">
+                                    <span class="text-slate-400 font-medium flex-shrink-0 text-[11px] sm:text-xs">Format Tugas:</span>
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right truncate min-w-0 text-[11px] sm:text-xs" x-text="settings.format_tugas || 'Google Drive, YouTube, Cloud Link'"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 p-2 sm:p-2.5 sm:px-3 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 min-w-0" x-show="settings.tahun_akademik">
+                                    <span class="text-slate-400 font-medium flex-shrink-0 text-[11px] sm:text-xs">Tahun Akademik:</span>
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right truncate min-w-0 text-[11px] sm:text-xs" x-text="settings.tahun_akademik"></span>
+                                </div>
+                            </div>
+
+                            <!-- Mini Preview Anggota -->
+                            <div class="pt-4 border-t border-slate-100 dark:border-slate-700/70">
+                                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Anggota Kelompok Terdaftar:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="s in students" :key="s.id">
+                                        <a :href="'detail.html?id=' + encodeURIComponent(s.id)" 
+                                           class="inline-flex items-center gap-1.5 bg-slate-50 dark:bg-slate-700/60 hover:bg-indigo-50 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-600 px-2.5 py-1.5 rounded-xl transition text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 max-w-full">
+                                            <span class="w-4 h-4 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border border-slate-200/60 dark:border-slate-600">
+                                                <template x-if="s.foto_profil">
+                                                    <img :src="getLogoUrl(s.foto_profil)" :alt="s.nama_lengkap" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                                </template>
+                                                <template x-if="!s.foto_profil">
+                                                    <span class="w-full h-full bg-indigo-100 dark:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-[9px]" x-text="s.nama_lengkap ? s.nama_lengkap.charAt(0).toUpperCase() : 'M'"></span>
+                                                </template>
+                                            </span>
+                                            <span class="truncate max-w-[120px] xs:max-w-[160px]" x-text="s.nama_lengkap"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- KONTEN UTAMA -->
+        <div class="w-full sm:max-w-[96%] 2xl:max-w-[96%] mx-auto px-3.5 sm:px-6 lg:px-8 pt-4 pb-1 sm:pt-6 space-y-8 sm:space-y-12 min-w-0">
+
+            <!-- BAGIAN 1: DAFTAR MAHASISWA -->
+            <section id="mahasiswa-section">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-slate-200 dark:border-slate-800">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-slate-800 px-3 py-1 rounded-full mb-2 border border-indigo-100 dark:border-slate-700">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z"/>
+                            </svg>
+                            Anggota Kelompok
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Profil Seluruh Anggota Mahasiswa</h2>
+                        <p class="text-xs text-slate-400 dark:text-slate-400 mt-1">Nama dan data anggota kelompok ditampilkan secara langsung di bawah ini</p>
+                    </div>
+                    <span class="text-xs font-semibold bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full border border-indigo-100 dark:border-slate-700 mt-2 sm:mt-0">
+                        <span x-text="students.length"></span> Mahasiswa Aktif
+                    </span>
+                </div>
+
+                <!-- Empty State -->
+                <div x-show="students.length === 0" class="bg-white dark:bg-slate-800/90 rounded-3xl p-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-700">
+                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Belum ada profil mahasiswa yang dipublikasikan.</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-400 mt-1">Data mahasiswa akan muncul di sini setelah diperbarui oleh pengelola.</p>
+                </div>
+
+                <!-- Grid Mahasiswa -->
+                <div x-show="students.length > 0" 
+                     class="grid gap-6 sm:gap-8"
+                     :class="{
+                         'grid-cols-1 max-w-2xl xl:max-w-3xl mx-auto': students.length === 1,
+                         'grid-cols-1 md:grid-cols-2': students.length === 2,
+                         'grid-cols-1 md:grid-cols-2 lg:grid-cols-3': students.length >= 3
+                     }">
+                    <template x-for="student in students" :key="student.id">
+                        <a :href="'detail.html?id=' + encodeURIComponent(student.id)"
+                           class="group bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-500 shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden hover:-translate-y-1 virtual-render">
+                            
+                            <!-- Banner Atas Card -->
+                            <div>
+                                <div class="h-28 sm:h-36 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 sm:p-6 flex items-start justify-between relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-black/10"></div>
+                                    <span class="relative z-10 text-[10px] sm:text-xs font-bold text-white bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
+                                        Mahasiswa Aktif
+                                    </span>
+                                    <span class="text-white/80 group-hover:translate-x-1 transition-transform relative z-10">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                                        </svg>
+                                    </span>
+                                </div>
+
+                                <!-- Avatar & NIM -->
+                                <div class="relative z-10 px-4 sm:px-8 -mt-10 sm:-mt-14 mb-4 sm:mb-6">
+                                    <div class="flex items-end justify-between gap-3 mb-5">
+                                        <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-slate-800 ring-4 ring-white dark:ring-slate-800 shadow-xl flex items-center justify-center flex-shrink-0 border border-slate-100 dark:border-slate-700 relative z-20">
+                                            <template x-if="student.foto_profil">
+                                                <img :src="getLogoUrl(student.foto_profil)" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                            </template>
+                                            <template x-if="!student.foto_profil">
+                                                <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-black text-3xl" x-text="student.nama_lengkap ? student.nama_lengkap.charAt(0).toUpperCase() : 'M'"></div>
+                                            </template>
+                                        </div>
+                                        <span class="text-xs font-mono font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-slate-200/70 dark:border-slate-600 shadow-2xs flex-shrink-0" x-text="'NIM: ' + student.nim"></span>
+                                    </div>
+
+                                    <!-- Nama & Deskripsi Diri -->
+                                    <h3 class="text-2xl font-black text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition mb-2" x-text="student.nama_lengkap"></h3>
+                                    
+                                    <p x-show="student.deskripsi" class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 break-words mb-5" x-text="student.deskripsi"></p>
+
+                                    <!-- Info Riwayat Sekolah Box -->
+                                    <template x-if="student.history_sekolah && student.history_sekolah.nama_sekolah && student.history_sekolah.nama_sekolah.trim() !== ''">
+                                        <div class="p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-700/40 border border-slate-200/70 dark:border-slate-700/70 flex items-center gap-4">
+                                            <template x-if="student.history_sekolah.link_sekolah && student.history_sekolah.link_sekolah.trim() !== ''">
+                                                <a :href="student.history_sekolah.link_sekolah" target="_blank" rel="noopener noreferrer" @click.stop
+                                                   class="w-12 h-12 rounded-xl bg-white dark:bg-slate-700 overflow-hidden border border-slate-200/60 dark:border-slate-600 shadow-2xs flex items-center justify-center flex-shrink-0 hover:ring-2 hover:ring-indigo-500/40 transition"
+                                                   title="Buka website sekolah">
+                                                    <template x-if="student.history_sekolah.logo_sekolah">
+                                                        <img :src="getLogoUrl(student.history_sekolah.logo_sekolah)" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                                    </template>
+                                                    <template x-if="!student.history_sekolah.logo_sekolah">
+                                                        <span class="text-amber-700 font-bold text-xs">SCH</span>
+                                                    </template>
+                                                </a>
+                                            </template>
+                                            <template x-if="!student.history_sekolah.link_sekolah || student.history_sekolah.link_sekolah.trim() === ''">
+                                                <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-700 overflow-hidden border border-slate-200/60 dark:border-slate-600 shadow-2xs flex items-center justify-center flex-shrink-0">
+                                                    <template x-if="student.history_sekolah.logo_sekolah">
+                                                        <img :src="getLogoUrl(student.history_sekolah.logo_sekolah)" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                                                    </template>
+                                                    <template x-if="!student.history_sekolah.logo_sekolah">
+                                                        <span class="text-amber-700 font-bold text-xs">SCH</span>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Sekolah Asal</p>
+                                                <template x-if="student.history_sekolah.link_sekolah && student.history_sekolah.link_sekolah.trim() !== ''">
+                                                    <a :href="student.history_sekolah.link_sekolah" target="_blank" rel="noopener noreferrer" @click.stop
+                                                       class="block text-sm font-bold text-slate-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition max-w-full"
+                                                       title="Kunjungi website sekolah">
+                                                        <span class="truncate block" x-text="student.history_sekolah.nama_sekolah"></span>
+                                                    </a>
+                                                </template>
+                                                <template x-if="!student.history_sekolah.link_sekolah || student.history_sekolah.link_sekolah.trim() === ''">
+                                                    <p class="text-sm font-bold text-slate-800 dark:text-white truncate" x-text="student.history_sekolah.nama_sekolah"></p>
+                                                </template>
+                                                <p x-show="student.history_sekolah.deskripsi_sekolah" class="text-xs text-slate-400 dark:text-slate-400 truncate" x-text="student.history_sekolah.deskripsi_sekolah"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Footer Kartu: Buka Profil -->
+                            <div class="px-4 sm:px-8 py-3 sm:py-4 bg-slate-50/90 dark:bg-slate-850/80 border-t border-slate-100 dark:border-slate-700/70 flex flex-col xs:flex-row xs:items-center justify-between gap-2">
+                                <span class="text-xs font-semibold text-slate-400 dark:text-slate-400">
+                                    Klik untuk melihat portofolio & riwayat tugas
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 font-bold text-xs text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-800 dark:group-hover:text-indigo-300 transition bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 px-4 py-2 rounded-xl shadow-2xs">
+                                    Buka Profil &rarr;
+                                </span>
+                            </div>
+                        </a>
+                    </template>
+                </div>
+            </section>
+
+            <!-- BAGIAN 2: 3 KARTU KETERANGAN -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-800/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-1" x-text="settings.card_matakuliah_title || 'Mata Kuliah Bahasa Inggris'">Mata Kuliah Bahasa Inggris</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed" x-text="settings.card_matakuliah_desc || 'Mencakup penulisan esai akademis, analisis jurnal, dan penyusunan slide presentasi kelompok secara profesional.'">
+                        Mencakup penulisan esai akademis, analisis jurnal, dan penyusunan slide presentasi kelompok secara profesional.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-1" x-text="settings.card_arsip_title || 'Arsip Berkas Digital'">Arsip Berkas Digital</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed" x-text="settings.card_arsip_desc || 'Setiap dokumen kelompok dan individu tersimpan aman di server dan dapat langsung diunduh sewaktu-waktu.'">
+                        Setiap dokumen kelompok dan individu tersimpan aman di server dan dapat langsung diunduh sewaktu-waktu.
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800/90 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-1" x-text="settings.card_pendidikan_title || 'Riwayat Pendidikan'">Riwayat Pendidikan</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed" x-text="settings.card_pendidikan_desc || 'Menampilkan jejak sekolah menengah dan latar belakang pendidikan asal masing-masing anggota mahasiswa.'">
+                        Menampilkan jejak sekolah menengah dan latar belakang pendidikan asal masing-masing anggota mahasiswa.
+                    </p>
+                </div>
+            </section>
+
+            <!-- BAGIAN 3: SELURUH TUGAS DENGAN DROPDOWN FILTER DINAMIS -->
+            <section id="tugas-section">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-slate-200 dark:border-slate-800 gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-slate-800 px-3 py-1 rounded-full mb-2 border border-emerald-100 dark:border-slate-700">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                            </svg>
+                            Koleksi Berkas Tugas
+                        </div>
+                        <h2 class="text-base sm:text-2xl lg:text-3xl font-extrabold text-slate-800 dark:text-white">Daftar Berkas Tugas</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Filter berkas tugas kelompok atau individu</p>
+                    </div>
+                    
+                    <!-- DROPDOWN FILTER PILIHAN TUGAS -->
+                    <div class="relative flex items-center gap-2.5">
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:inline-block">Filter Tugas:</span>
+
+                        <div class="relative w-full sm:w-auto" @keydown.escape.window="dropdownOpen = false">
+                            <!-- Tombol Pemicu Dropdown -->
+                            <button @click="dropdownOpen = !dropdownOpen" 
+                                    type="button"
+                                    :class="isSwitching ? 'ring-2 ring-indigo-400 dark:ring-indigo-500 scale-[0.98]' : ''"
+                                    class="w-full sm:w-auto inline-flex items-center justify-between gap-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-slate-700 shadow-2xs hover:shadow-xs px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 transition-all duration-200 cursor-pointer sm:min-w-[260px]">
+                                <div class="flex items-center gap-2.5 truncate">
+                                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                                          :class="{
+                                              'bg-indigo-500': filter === 'all',
+                                              'bg-blue-500': filter === 'group',
+                                              'bg-emerald-500': filter !== 'all' && filter !== 'group'
+                                          }"></span>
+                                    <span x-text="filterLabel" class="truncate"></span>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 flex-shrink-0" 
+                                     :class="dropdownOpen ? 'rotate-180' : ''" 
+                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                                </svg>
+                            </button>
+
+                            <!-- Menu Dropdown Floating -->
+                            <div x-cloak x-show="dropdownOpen" 
+                                 @click.away="dropdownOpen = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                 class="absolute right-0 mt-2 w-full sm:w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/90 dark:border-slate-700 py-2 z-50 overflow-hidden divide-y divide-slate-100 dark:divide-slate-700">
+                                 
+                                <!-- Kategori Umum: Semua & Kelompok -->
+                                <div class="p-1.5 space-y-1">
+                                    <!-- 1. Semua Tugas -->
+                                    <button @click="setFilter('all', 'Semua Berkas Tugas (' + totalTasks + ')')"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer text-left"
+                                            :class="filter === 'all' ? 'bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60'">
+                                        <div class="flex items-center gap-2.5 truncate">
+                                            <span class="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0"></span>
+                                            <span class="truncate">Semua Berkas Tugas</span>
+                                        </div>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                              :class="filter === 'all' ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'"
+                                              x-text="totalTasks"></span>
+                                    </button>
+
+                                    <!-- 2. Tugas Kelompok -->
+                                    <button @click="setFilter('group', 'Tugas Kelompok (' + groupTasks.length + ')')"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer text-left"
+                                            :class="filter === 'group' ? 'bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60'">
+                                        <div class="flex items-center gap-2.5 truncate">
+                                            <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></span>
+                                            <span class="truncate">Tugas Kelompok</span>
+                                        </div>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                              :class="filter === 'group' ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'"
+                                              x-text="groupTasks.length"></span>
+                                    </button>
+                                </div>
+
+                                <!-- Kategori: Per Mahasiswa -->
+                                <div class="p-1.5 space-y-1">
+                                    <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        Tugas Per Mahasiswa
+                                    </div>
+                                    <template x-for="s in students" :key="s.id">
+                                        <button @click="setFilter(s.id, 'Tugas: ' + s.nama_lengkap + ' (' + getStudentTaskCount(s.id) + ')')"
+                                                class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer text-left"
+                                                :class="filter === s.id ? 'bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60'">
+                                            <div class="flex items-center gap-2.5 truncate max-w-[190px]">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                                                <span class="truncate" x-text="s.nama_lengkap"></span>
+                                            </div>
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                  :class="filter === s.id ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'"
+                                                  x-text="getStudentTaskCount(s.id)"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State Tugas -->
+                <div x-show="filteredTasks.length === 0" class="bg-white dark:bg-slate-800/90 rounded-3xl p-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-700">
+                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tidak ada berkas tugas untuk filter ini.</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-400 mt-1">Pilih filter lain pada menu dropdown di atas.</p>
+                </div>
+
+                <!-- DAFTAR KARTU BERKAS TUGAS -->
+                <div x-show="filteredTasks.length > 0" class="space-y-4">
+                    <template x-for="t in filteredTasks" :key="t.id + '-' + t.taskType">
+                        <a :href="t.parsed ? t.parsed.originalUrl : t.link_tugas" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="group p-3.5 sm:p-5 bg-white dark:bg-slate-800/90 hover:bg-slate-50/90 dark:hover:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-slate-600 transition-all duration-200 shadow-2xs hover:shadow-xs flex items-center justify-between gap-3.5 sm:gap-4 cursor-pointer block">
+                            
+                            <div class="flex items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
+                                <!-- Thumbnail / Badge Icon Platform -->
+                                <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0 border shadow-2xs transition-transform group-hover:scale-105"
+                                     :class="t.parsed ? t.parsed.badgeClass : 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50'">
+                                    
+                                    <!-- Jika Memiliki Thumbnail (YouTube / Google Drive / Docs) -->
+                                    <template x-if="t.parsed && t.parsed.thumbnailUrl">
+                                        <div class="w-full h-full relative">
+                                            <img :src="t.parsed.thumbnailUrl" 
+                                                 :alt="t.judul_tugas"
+                                                 loading="lazy" decoding="async"
+                                                 class="w-full h-full object-cover"
+                                                 @error="$el.style.display='none'; $el.nextElementSibling.style.display='flex'">
+                                            
+                                            <!-- Fallback Icon jika gambar gagal dimuat -->
+                                            <div style="display:none;" class="w-full h-full items-center justify-center">
+                                                <template x-if="t.parsed.icon === 'youtube'">
+                                                    <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                    </svg>
+                                                </template>
+                                                <template x-if="t.parsed.icon === 'drive'">
+                                                    <svg class="w-6 h-6" viewBox="0 0 87.3 78" fill="none">
+                                                        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                                                        <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44C.4 50 0 51.55 0 53.1h27.5L43.65 25z" fill="#00AC47"/>
+                                                        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 10.15 7.9 13.65z" fill="#EA4335"/>
+                                                        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.4-4.5 1.2L43.65 25z" fill="#00832D"/>
+                                                        <path d="M59.8 53.1H87.3c0-1.55-.4-3.1-1.2-4.5l-22.35-38.7c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53.1z" fill="#2684FC"/>
+                                                        <path d="M73.4 76.8l-13.6-23.7H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.65c1.6 0 3.15-.4 4.5-1.2z" fill="#FFBA00"/>
+                                                    </svg>
+                                                </template>
+                                            </div>
+
+                                            <!-- Mini Overlay Badge Platform di Pojok Thumbnail -->
+                                            <div class="absolute bottom-1 right-1 p-0.5 rounded-md bg-black/60 backdrop-blur-xs flex items-center justify-center shadow-xs">
+                                                <template x-if="t.parsed.icon === 'youtube'">
+                                                    <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                    </svg>
+                                                </template>
+                                                <template x-if="t.parsed.icon === 'drive'">
+                                                    <svg class="w-3 h-3" viewBox="0 0 87.3 78" fill="none">
+                                                        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                                                        <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44C.4 50 0 51.55 0 53.1h27.5L43.65 25z" fill="#00AC47"/>
+                                                        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 10.15 7.9 13.65z" fill="#EA4335"/>
+                                                        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.4-4.5 1.2L43.65 25z" fill="#00832D"/>
+                                                        <path d="M59.8 53.1H87.3c0-1.55-.4-3.1-1.2-4.5l-22.35-38.7c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53.1z" fill="#2684FC"/>
+                                                        <path d="M73.4 76.8l-13.6-23.7H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.65c1.6 0 3.15-.4 4.5-1.2z" fill="#FFBA00"/>
+                                                    </svg>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Jika Tidak Memiliki Thumbnail Gambar (Default Icon) -->
+                                    <template x-if="!t.parsed || !t.parsed.thumbnailUrl">
+                                        <div class="flex items-center justify-center">
+                                            <!-- YouTube Icon -->
+                                            <template x-if="t.parsed && t.parsed.icon === 'youtube'">
+                                                <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                </svg>
+                                            </template>
+
+                                            <!-- Google Drive Icon (Resmi Berwarna) -->
+                                            <template x-if="t.parsed && t.parsed.icon === 'drive'">
+                                                <svg class="w-6 h-6" viewBox="0 0 87.3 78" fill="none">
+                                                    <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                                                    <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44C.4 50 0 51.55 0 53.1h27.5L43.65 25z" fill="#00AC47"/>
+                                                    <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 10.15 7.9 13.65z" fill="#EA4335"/>
+                                                    <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.4-4.5 1.2L43.65 25z" fill="#00832D"/>
+                                                    <path d="M59.8 53.1H87.3c0-1.55-.4-3.1-1.2-4.5l-22.35-38.7c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53.1z" fill="#2684FC"/>
+                                                    <path d="M73.4 76.8l-13.6-23.7H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.65c1.6 0 3.15-.4 4.5-1.2z" fill="#FFBA00"/>
+                                                </svg>
+                                            </template>
+
+                                            <!-- Default Cloud Icon -->
+                                            <template x-if="!t.parsed || (t.parsed.icon !== 'youtube' && t.parsed.icon !== 'drive')">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                                                </svg>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Detail Teks Berkas -->
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-2 mb-1 min-w-0">
+                                        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs whitespace-nowrap shrink-0 max-w-full truncate inline-block"
+                                              :class="t.taskType === 'group' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-900' : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-900'"
+                                              :title="t.uploaderName || getStudentName(t.student_id)">
+                                            <span x-text="t.taskType === 'group' ? 'Tugas Kelompok' : ('Tugas Mandiri • ' + (t.uploaderName || getStudentName(t.student_id)))"></span>
+                                        </span>
+                                    </div>
+                                    <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition block truncate" 
+                                        x-text="t.judul_tugas"></h4>
+                                    <p class="text-[11px] text-slate-400 mt-1 truncate" x-text="t.formattedDate"></p>
+                                </div>
+                            </div>
+
+                            <!-- Indikator Panah Buka Tautan -->
+                            <div class="flex-shrink-0 text-slate-300 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-1 transition-all">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                                </svg>
+                            </div>
+
+                        </a>
+                    </template>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-2 transition-colors duration-300">
+        <div class="w-full max-w-[96%] 2xl:max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <!-- Brand Info -->
+                <div class="flex items-center gap-2">
+                    <template x-if="settings.web_logo">
+                        <img :src="getLogoUrl(settings.web_logo)" 
+                             :alt="settings.web_title" 
+                             class="w-6 h-6 rounded-lg object-cover shadow-2xs"
+                             loading="lazy" decoding="async">
+                    </template>
+                    <template x-if="!settings.web_logo">
+                        <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-600 to-emerald-500 text-white flex items-center justify-center font-bold text-[10px]">
+                            EN
+                        </div>
+                    </template>
+                    <span class="font-bold text-sm text-slate-700 dark:text-slate-200" x-text="settings.web_title || 'EngSpace'"></span>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-xs text-slate-400 dark:text-slate-500 text-center sm:text-right">
+                    &copy; <span x-text="new Date().getFullYear()"></span> <span x-text="settings.web_title || 'Portal Tugas Kelompok'"></span>. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

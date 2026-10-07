@@ -1,0 +1,26 @@
+[
+    {
+        "id": "it_001",
+        "judul_tugas": "Tugas 11",
+        "link_tugas": "https:\/\/youtu.be\/O3wDmnDU4E8?si=9Xso-amXrCBx82hX",
+        "sumber_link": "youtube",
+        "tanggal_upload": "2026-10-02 00:39:29",
+        "student_id": "std_001"
+    },
+    {
+        "id": "it_002",
+        "judul_tugas": "l",
+        "link_tugas": "https:\/\/drive.google.com\/file\/d\/1P5kfQkuYt8gfyCFNmi8Zm4CsgUiWvLNZ\/view?usp=drive_link",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-02 01:41:16",
+        "student_id": "std_001"
+    },
+    {
+        "id": "it_003",
+        "judul_tugas": "q",
+        "link_tugas": "https:\/\/youtu.be\/cdI8e7zEwAs?si=DHjPZ05Vz28-_G0f",
+        "sumber_link": "youtube",
+        "tanggal_upload": "2026-10-04 22:30:21",
+        "student_id": "std_002"
+    }
+]

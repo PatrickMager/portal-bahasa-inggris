@@ -1,0 +1,53 @@
+[
+    {
+        "id": "std_001",
+        "nama_lengkap": "Febrian alfarizzi",
+        "nim": "25090520047",
+        "deskripsi": "Hai",
+        "foto_profil": "std_001_profile_1790876274.jpg",
+        "history_sekolah": {
+            "nama_sekolah": "SMAN 1 Jakenan",
+            "deskripsi_sekolah": "TOP",
+            "logo_sekolah": "",
+            "link_sekolah": "https://sman1jakenan.sch.id"
+        }
+    },
+    {
+        "id": "std_002",
+        "nama_lengkap": "Budi Santoso1",
+        "nim": "2024010001",
+        "deskripsi": "",
+        "foto_profil": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    },
+    {
+        "id": "std_003",
+        "nama_lengkap": "Febrian alfarizzi",
+        "nim": "2024010002",
+        "deskripsi": "",
+        "foto_profil": "std_003_profile_1791136940.png",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": "std_003_school_1791136989.jpeg"
+        }
+    },
+    {
+        "id": "std_004",
+        "nama_lengkap": "hg",
+        "nim": "121",
+        "deskripsi": "",
+        "foto_profil": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    }
+]

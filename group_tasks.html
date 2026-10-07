@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arsip Tugas Kelompok - Portofolio Akademik</title>
+
+    <!-- Favicon Diambilkan dari Logo Website yang Diupload -->
+    <link rel="icon" id="dynamic-favicon" type="image/png" href="uploads/images/web_logo_1790876671.png">
+    <link rel="apple-touch-icon" id="dynamic-apple-favicon" href="uploads/images/web_logo_1790876671.png">
+    <script>
+        (function() {
+            try {
+                var cached = localStorage.getItem('site_settings');
+                if (cached) {
+                    var s = JSON.parse(cached);
+                    if (s && s.web_logo) {
+                        var l1 = document.getElementById('dynamic-favicon');
+                        var l2 = document.getElementById('dynamic-apple-favicon');
+                        var url = 'uploads/images/' + s.web_logo;
+                        if (l1) l1.href = url;
+                        if (l2) l2.href = url;
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- Script Pencegah Flashbang Mode Gelap -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '420px',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            750: '#233047',
+                            850: '#172033',
+                            950: '#0b1120'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js?v=4.0"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body x-data="groupTasksApp()" class="bg-slate-50 dark:bg-[#0f172a] font-sans text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-300">
+    <!-- Progress Bar Indikator Animasi Navigasi -->
+    <div id="nav-progress-bar"></div>
+    
+    <!-- NAVBAR ATAS -->
+    <nav class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-[#0f172a]/90 border-b border-slate-200/70 dark:border-slate-800/90 shadow-2xs transition-colors duration-300">
+        <div class="w-full max-w-[96%] 2xl:max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-2 sm:gap-4">
+                
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
+                    <button @click="mobileMenuOpen = true" 
+                            type="button"
+                            class="lg:hidden p-2 -ml-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden transition cursor-pointer flex-shrink-0"
+                            aria-label="Buka Menu Navigasi">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
+                        </svg>
+                    </button>
+
+                    <a href="index.html" class="flex items-center gap-2 sm:gap-2.5 group min-w-0 flex-1 lg:flex-initial">
+                        <template x-if="settings.web_logo">
+                            <img :src="getLogoUrl(settings.web_logo)" 
+                                 :alt="settings.web_title" 
+                                 loading="lazy" decoding="async"
+                                 class="w-8 h-8 rounded-xl object-cover shadow-xs border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform flex-shrink-0">
+                        </template>
+                        <template x-if="!settings.web_logo">
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center font-black text-xs shadow-xs flex-shrink-0">
+                                EN
+                            </div>
+                        </template>
+                        <span class="font-extrabold text-xs xs:text-sm sm:text-base lg:text-lg text-slate-800 dark:text-white tracking-tight truncate min-w-0 flex-1 lg:flex-initial max-w-full lg:max-w-[260px] xl:max-w-none" :title="settings.web_title || 'EngSpace'" x-text="settings.web_title || 'EngSpace'"></span>
+                    </a>
+                </div>
+
+                <!-- SISI KANAN: Menu Navigasi Desktop + TOMBOL DARK MODE -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    
+                    <div class="hidden lg:flex items-center gap-2">
+                        <!-- Kolom Beranda -->
+                        <a href="index.html" 
+                           class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] active:scale-95 flex items-center gap-1.5 flex-shrink-0 border shadow-2xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/70 dark:hover:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 hover:border-indigo-200 dark:hover:border-slate-600">
+                            <span class="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center text-[10px] flex-shrink-0 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+                                </svg>
+                            </span>
+                            <span>Beranda</span>
+                        </a>
+
+                        <!-- DAFTAR NAMA-NAMA MAHASISWA -->
+                        <template x-for="ns in students" :key="ns.id">
+                            <a :href="'detail.html?id=' + encodeURIComponent(ns.id)"
+                               class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] active:scale-95 flex items-center gap-1.5 flex-shrink-0 border shadow-2xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/70 dark:hover:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 hover:border-indigo-200 dark:hover:border-slate-600">
+                                <span class="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center text-[10px] flex-shrink-0 transition-colors border border-slate-200/60 dark:border-slate-700">
+                                    <template x-if="ns.foto_profil">
+                                        <img :src="getLogoUrl(ns.foto_profil)" :alt="ns.nama_lengkap" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!ns.foto_profil">
+                                        <span class="w-full h-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center" x-text="ns.nama_lengkap ? ns.nama_lengkap.charAt(0).toUpperCase() : 'M'"></span>
+                                    </template>
+                                </span>
+                                <span class="truncate max-w-[140px]" x-text="ns.nama_lengkap"></span>
+                            </a>
+                        </template>
+
+                        <!-- Kolom Tugas Kelompok (Aktif) -->
+                        <a href="group_tasks.html" 
+                           class="px-3 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:scale-[1.03] active:scale-95 flex items-center gap-1.5 flex-shrink-0 border shadow-2xs bg-indigo-50/80 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-slate-600">
+                            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] flex-shrink-0 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                                </svg>
+                            </span>
+                            <span>Tugas Kelompok</span>
+                        </a>
+                    </div>
+
+                    <div class="hidden lg:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+                    <!-- TOMBOL DARK MODE -->
+                    <button @click="toggleTheme()" 
+                            type="button"
+                            class="p-2 sm:p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:text-indigo-600 dark:hover:text-amber-300 border border-slate-200/80 dark:border-slate-700/80 transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 active:scale-95 flex items-center justify-center"
+                            :title="darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'"
+                            aria-label="Toggle Dark Mode">
+                        
+                        <svg x-cloak x-show="!darkMode" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/>
+                        </svg>
+
+                        <svg x-cloak x-show="darkMode" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
+                        </svg>
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- OFF-CANVAS DRAWER MENU -->
+    <div x-cloak 
+         @keydown.escape.window="mobileMenuOpen = false"
+         class="fixed inset-0 z-[100] lg:hidden transition-[visibility] duration-350"
+         :class="mobileMenuOpen ? 'visible pointer-events-auto' : 'invisible pointer-events-none delay-350'"
+         aria-modal="true" 
+         role="dialog">
+
+        <div @click="mobileMenuOpen = false"
+             class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm drawer-fade-backdrop cursor-pointer"
+             :class="mobileMenuOpen ? 'backdrop-open' : ''"></div>
+
+        <div class="fixed inset-y-0 left-0 w-[86vw] max-w-[340px] sm:w-[400px] sm:max-w-md bg-white dark:bg-[#0f172a] shadow-2xl z-10 flex flex-col h-full border-r border-slate-200 dark:border-slate-800 drawer-slide-panel"
+             :class="mobileMenuOpen ? 'drawer-open shadow-2xl' : 'shadow-none'">
+            
+            <div class="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0f172a] flex-shrink-0">
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <template x-if="settings.web_logo">
+                        <img :src="getLogoUrl(settings.web_logo)" 
+                             :alt="settings.web_title" 
+                             loading="lazy" decoding="async"
+                             class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover shadow-xs border border-slate-200 dark:border-slate-700">
+                    </template>
+                    <template x-if="!settings.web_logo">
+                        <div class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-emerald-500 text-white shadow-xs">
+                            <span class="font-bold text-xs">EN</span>
+                        </div>
+                    </template>
+                    <div>
+                        <span class="font-extrabold text-base sm:text-lg text-slate-800 dark:text-white tracking-tight" x-text="settings.web_title || 'EngSpace'"></span>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-400" x-text="settings.web_subtitle || 'Portal Tugas & Portofolio'"></p>
+                    </div>
+                </div>
+                <button @click="mobileMenuOpen = false" 
+                        type="button" 
+                        class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                        aria-label="Tutup Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 sm:space-y-6">
+                <div>
+                    <a href="index.html" 
+                       @click="mobileMenuOpen = false"
+                       class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-bold text-sm transition border shadow-2xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/60">
+                        <div class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+                            </svg>
+                        </div>
+                        <span class="flex-1 font-bold">Beranda Utama</span>
+                    </a>
+                </div>
+
+                <!-- Group: Profil Mahasiswa -->
+                <div>
+                    <div class="flex items-center justify-between px-1 mb-2.5">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            Anggota Mahasiswa (<span x-text="students.length"></span>)
+                        </span>
+                        <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-900">
+                            Pilih Profil
+                        </span>
+                    </div>
+                    <div class="space-y-2">
+                        <template x-for="ns in students" :key="ns.id">
+                            <a :href="'detail.html?id=' + encodeURIComponent(ns.id)" 
+                               @click="mobileMenuOpen = false"
+                               class="flex items-center gap-3 p-3 rounded-2xl text-xs font-semibold transition border shadow-2xs group bg-white dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700/60 border-slate-200/80 dark:border-slate-700/60">
+                                <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 shadow-2xs border border-slate-200/60 dark:border-slate-700/80">
+                                    <template x-if="ns.foto_profil">
+                                        <img :src="getLogoUrl(ns.foto_profil)" :alt="ns.nama_lengkap" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!ns.foto_profil">
+                                        <div class="w-full h-full bg-indigo-100 dark:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center text-xs" x-text="ns.nama_lengkap ? ns.nama_lengkap.charAt(0).toUpperCase() : 'M'"></div>
+                                    </template>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-slate-800 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" x-text="ns.nama_lengkap"></p>
+                                    <p class="text-[10px] text-slate-400 font-mono mt-0.5 truncate" x-text="'NIM: ' + ns.nim"></p>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                                </svg>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Group: Arsip Berkas -->
+                <div>
+                    <div class="px-1 mb-2.5">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Arsip Berkas</span>
+                    </div>
+                    <a href="group_tasks.html" 
+                       @click="mobileMenuOpen = false"
+                       class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-bold text-sm transition border shadow-2xs bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-slate-600">
+                        <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                            </svg>
+                        </div>
+                        <span class="flex-1 font-bold">Tugas Kelompok</span>
+                        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-mono" x-text="groupTasks.length + ' Berkas'"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                <p class="text-[11px] text-slate-400 text-center font-medium" x-text="settings.web_title"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="flex-1 w-full min-w-0 max-w-full page-enter-active transition-all duration-200">
+        <div class="w-full max-w-[96%] 2xl:max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 sm:pt-8 sm:pb-3">
+
+            <!-- HERO SECTION TUGAS KELOMPOK -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50/80 via-white to-blue-50/60 dark:from-indigo-950 dark:via-slate-900 dark:to-indigo-950 p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 shadow-sm dark:shadow-lg border border-slate-200/80 dark:border-indigo-800/40 transition-colors duration-300">
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-300/20 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-emerald-300/20 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-stretch">
+                    
+                    <!-- KOLOM KIRI: Judul & Statistik -->
+                    <div class="lg:col-span-7 flex flex-col justify-between">
+                        <div>
+                            <div class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/20 backdrop-blur-md border border-indigo-200/80 dark:border-indigo-400/30 text-indigo-700 dark:text-indigo-200 text-xs font-bold px-3.5 py-1.5 rounded-full mb-4 shadow-2xs transition-colors">
+                                <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.199l-.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+                                </svg>
+                                <span>Academic Collaboration &bull; <span x-text="settings.web_title || 'English Group Workspace'"></span></span>
+                            </div>
+
+                            <h1 class="text-2xl sm:text-3xl lg:text-4xl 2xl:text-5xl font-black tracking-tight mb-3 text-slate-800 dark:text-white leading-tight transition-colors">
+                                Arsip & Dokumen Tugas Kelompok
+                            </h1>
+                            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6 font-normal transition-colors">
+                                Koleksi presentasi slide, video speech, dan dokumen akademik hasil kolaborasi kelompok mahasiswa. Terintegrasi langsung dengan cloud Google Drive dan YouTube untuk akses cepat.
+                            </p>
+                        </div>
+
+                        <!-- STATISTIK RINGKAS -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 pt-4 border-t border-slate-200/80 dark:border-indigo-800/50">
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white/85 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors flex flex-col justify-between">
+                                <p class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Total Tugas</p>
+                                <p class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 dark:text-white my-1" x-text="platformStats.total"></p>
+                                <span class="text-[10px] text-slate-400">Berkas Terbit</span>
+                            </div>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white/85 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors flex flex-col justify-between">
+                                <p class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Google Drive</p>
+                                <p class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 dark:text-white my-1" x-text="platformStats.drive"></p>
+                                <span class="text-[10px] text-slate-400">Dokumen / Slide</span>
+                            </div>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white/85 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors flex flex-col justify-between">
+                                <p class="text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">YouTube</p>
+                                <p class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 dark:text-white my-1" x-text="platformStats.youtube"></p>
+                                <span class="text-[10px] text-slate-400">Video Presentasi</span>
+                            </div>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white/85 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs transition-colors flex flex-col justify-between">
+                                <p class="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Kolaborator</p>
+                                <p class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 dark:text-white my-1" x-text="platformStats.members"></p>
+                                <span class="text-[10px] text-slate-400">Mahasiswa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KOLOM KANAN: Pencarian Cepat & Filter -->
+                    <div class="lg:col-span-5 flex flex-col justify-between">
+                        <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-indigo-800/50 shadow-sm flex flex-col justify-between h-full">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-1">Cari Tugas Kelompok</h3>
+                                <p class="text-xs text-slate-400 mb-4">Temukan berkas presentasi atau dokumen kelompok</p>
+                                
+                                <div class="relative mb-3">
+                                    <input type="text" 
+                                           x-model="searchQuery" 
+                                           placeholder="Ketik judul tugas..."
+                                           class="w-full pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-white placeholder-slate-400 transition">
+                                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                                    </svg>
+                                </div>
+
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button @click="selectedPlatform = 'all'" 
+                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+                                            :class="selectedPlatform === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200'">
+                                        Semua (<span x-text="groupTasks.length"></span>)
+                                    </button>
+                                    <button @click="selectedPlatform = 'drive'" 
+                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+                                            :class="selectedPlatform === 'drive' ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200'">
+                                        Drive (<span x-text="platformStats.drive"></span>)
+                                    </button>
+                                    <button @click="selectedPlatform = 'youtube'" 
+                                            class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+                                            :class="selectedPlatform === 'youtube' ? 'bg-red-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200'">
+                                        YouTube (<span x-text="platformStats.youtube"></span>)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs text-slate-400">
+                                <span>Menampilkan <strong class="text-slate-700 dark:text-slate-200" x-text="filteredTasks.length"></strong> dari <span x-text="groupTasks.length"></span> tugas</span>
+                                <button x-show="searchQuery || selectedPlatform !== 'all'" 
+                                        @click="clearSearch()" 
+                                        class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold cursor-pointer">
+                                    Reset Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- LIST TUGAS KELOMPOK -->
+            <div>
+                <!-- Empty State -->
+                <div x-show="filteredTasks.length === 0" class="bg-white dark:bg-slate-800/90 rounded-3xl p-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-700">
+                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tidak ada berkas tugas kelompok yang sesuai.</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-400 mt-1">Coba sesuaikan kata kunci pencarian atau ubah filter platform.</p>
+                    <button @click="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 text-xs font-bold rounded-xl border border-indigo-200 dark:border-slate-600 cursor-pointer">
+                        Reset Pencarian
+                    </button>
+                </div>
+
+                <!-- Grid Tampilan Tugas -->
+                <div x-show="filteredTasks.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="task in filteredTasks" :key="task.id">
+                        <div @click="window.open(task.parsed ? task.parsed.originalUrl : task.link_tugas, '_blank')"
+                             class="virtual-render bg-white dark:bg-slate-800/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600/50 transition flex flex-col justify-between cursor-pointer group">
+                            <div>
+                                <div class="flex items-start gap-3.5 sm:gap-4 mb-4">
+                                    <!-- Thumbnail / Badge Icon Platform (Sama Seperti di Kolom Tugas Index) -->
+                                    <a :href="task.parsed ? task.parsed.originalUrl : task.link_tugas" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       @click.stop
+                                       class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0 border shadow-2xs transition-transform hover:scale-105 cursor-pointer block"
+                                       :class="task.parsed ? task.parsed.badgeClass : 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50'"
+                                       :title="'Buka ' + task.judul_tugas">
+                                        
+                                        <!-- Jika Memiliki Thumbnail (YouTube / Google Drive / Docs) -->
+                                        <template x-if="task.parsed && task.parsed.thumbnailUrl">
+                                            <div class="w-full h-full relative">
+                                                <img :src="task.parsed.thumbnailUrl" 
+                                                     :alt="task.judul_tugas"
+                                                     loading="lazy" decoding="async"
+                                                     class="w-full h-full object-cover"
+                                                     @error="$el.style.display='none'; $el.nextElementSibling.style.display='flex'">
+                                                
+                                                <!-- Fallback Icon jika gambar gagal dimuat -->
+                                                <div style="display:none;" class="w-full h-full items-center justify-center">
+                                                    <template x-if="task.parsed.icon === 'youtube'">
+                                                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                        </svg>
+                                                    </template>
+                                                    <template x-if="task.parsed.icon === 'drive'">
+                                                        <svg class="w-6 h-6" viewBox="0 0 87.3 78" fill="none">
+                                                            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                                                            <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44C.4 50 0 51.55 0 53.1h27.5L43.65 25z" fill="#00AC47"/>
+                                                            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 10.15 7.9 13.65z" fill="#EA4335"/>
+                                                            <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.4-4.5 1.2L43.65 25z" fill="#00832D"/>
+                                                            <path d="M59.8 53.1H87.3c0-1.55-.4-3.1-1.2-4.5l-22.35-38.7c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53.1z" fill="#2684FC"/>
+                                                            <path d="M73.4 76.8l-13.6-23.7H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.65c1.6 0 3.15-.4 4.5-1.2z" fill="#FFBA00"/>
+                                                        </svg>
+                                                    </template>
+                                                </div>
+
+                                                <!-- Mini Overlay Badge Platform di Pojok Thumbnail -->
+                                                <div class="absolute bottom-1 right-1 p-0.5 rounded-md bg-black/60 backdrop-blur-xs flex items-center justify-center shadow-xs">
+                                                    <template x-if="task.parsed.icon === 'youtube'">
+                                                        <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                        </svg>
+                                                    </template>
+                                                    <template x-if="task.parsed.icon === 'drive'">
+                                                        <svg class="w-3 h-3" viewBox="0 0 87.3 78" fill="none">
+                                                            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                                                            <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44C.4 50 0 51.55 0 53.1h27.5L43.65 25z" fill="#00AC47"/>
+                                                            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 10.15 7.9 13.65z" fill="#EA4335"/>
+                                                            <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.4-4.5 1.2L43.65 25z" fill="#00832D"/>
+                                                            <path d="M59.8 53.1H87.3c0-1.55-.4-3.1-1.2-4.5l-22.35-38.7c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53.1z" fill="#2684FC"/>
+                                                            <path d="M73.4 76.8l-13.6-23.7H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.65c1.6 0 3.15-.4 4.5-1.2z" fill="#FFBA00"/>
+                                                        </svg>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Jika Tidak Memiliki Thumbnail Gambar (Default Icon) -->
+                                        <template x-if="!task.parsed || !task.parsed.thumbnailUrl">
+                                            <div class="flex items-center justify-center">
+                                                <template x-if="task.parsed && task.parsed.icon === 'youtube'">
+                                                    <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                    </svg>
+                                                </template>
+                                                <template x-if="task.parsed && task.parsed.icon === 'drive'">
+                                                    <svg class="w-6 h-6" viewBox="0 0 87.3 78" fill="none">
+                                                        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                                                        <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44C.4 50 0 51.55 0 53.1h27.5L43.65 25z" fill="#00AC47"/>
+                                                        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 10.15 7.9 13.65z" fill="#EA4335"/>
+                                                        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.4-4.5 1.2L43.65 25z" fill="#00832D"/>
+                                                        <path d="M59.8 53.1H87.3c0-1.55-.4-3.1-1.2-4.5l-22.35-38.7c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53.1z" fill="#2684FC"/>
+                                                        <path d="M73.4 76.8l-13.6-23.7H27.5L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.65c1.6 0 3.15-.4 4.5-1.2z" fill="#FFBA00"/>
+                                                    </svg>
+                                                </template>
+                                                <template x-if="!task.parsed || (task.parsed.icon !== 'youtube' && task.parsed.icon !== 'drive')">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                                                    </svg>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </a>
+
+                                    <!-- Judul, Badge Platform, & Tanggal Upload -->
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border"
+                                                  :class="task.parsed ? task.parsed.badgeClass : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600'">
+                                                <span x-text="task.parsed ? task.parsed.label : 'Cloud Link'"></span>
+                                            </span>
+
+                                            <span class="text-[11px] text-slate-400" x-text="task.formattedDate"></span>
+                                        </div>
+
+                                        <h3 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-snug">
+                                            <a :href="task.parsed ? task.parsed.originalUrl : task.link_tugas" 
+                                               target="_blank" 
+                                               rel="noopener noreferrer" 
+                                               @click.stop
+                                               class="hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                                               x-text="task.judul_tugas"></a>
+                                        </h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+                                    Berkas hasil kerja kelompok terpadu.
+                                </p>
+                            </div>
+
+                            <!-- Kolaborator Anggota Kelompok (1 Baris Terisi 2 Mahasiswa) -->
+                            <div @click.stop class="pt-3.5 border-t border-slate-100 dark:border-slate-700/60 flex flex-col xs:flex-row xs:items-center justify-between gap-2 text-xs">
+                                <span class="text-slate-400 dark:text-slate-400 font-semibold text-[11px] uppercase tracking-wider shrink-0">Kolaborator:</span>
+                                <div class="grid grid-cols-2 gap-1.5 xs:gap-2 min-w-0">
+                                    <template x-for="s in students" :key="s.id">
+                                        <a :href="'detail.html?id=' + encodeURIComponent(s.id)"
+                                           @click.stop
+                                           class="inline-flex items-center gap-1.5 px-2 xs:px-2.5 py-1 rounded-xl bg-slate-50 hover:bg-indigo-50 dark:bg-slate-700/70 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold text-xs border border-slate-200/80 dark:border-slate-600/70 transition shadow-2xs group/collab min-w-0"
+                                           :title="'Lihat profil ' + s.nama_lengkap">
+                                            <span class="w-4 h-4 xs:w-5 xs:h-5 rounded-full overflow-hidden flex items-center justify-center shrink-0 border border-slate-200/80 dark:border-slate-600">
+                                                <template x-if="s.foto_profil">
+                                                    <img :src="getLogoUrl(s.foto_profil)" :alt="s.nama_lengkap" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                                                </template>
+                                                <template x-if="!s.foto_profil">
+                                                    <span class="w-full h-full bg-indigo-600 text-white text-[9px] font-bold flex items-center justify-center" x-text="s.nama_lengkap ? s.nama_lengkap.charAt(0).toUpperCase() : 'M'"></span>
+                                                </template>
+                                            </span>
+                                            <span class="truncate min-w-0 flex-1 max-w-[100px] xs:max-w-[125px] sm:max-w-[160px]" x-text="s.nama_lengkap"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-2 transition-colors duration-300">
+        <div class="w-full max-w-[96%] 2xl:max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <template x-if="settings.web_logo">
+                        <img :src="getLogoUrl(settings.web_logo)" 
+                             :alt="settings.web_title" 
+                             loading="lazy" decoding="async"
+                             class="w-6 h-6 rounded-lg object-cover shadow-2xs">
+                    </template>
+                    <template x-if="!settings.web_logo">
+                        <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-600 to-emerald-500 text-white flex items-center justify-center font-bold text-[10px]">
+                            EN
+                        </div>
+                    </template>
+                    <span class="font-bold text-sm text-slate-700 dark:text-slate-200" x-text="settings.web_title || 'EngSpace'"></span>
+                </div>
+                <div class="text-xs text-slate-400 dark:text-slate-500 text-center sm:text-right">
+                    &copy; <span x-text="new Date().getFullYear()"></span> <span x-text="settings.web_title || 'Portal Tugas Kelompok'"></span>. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
