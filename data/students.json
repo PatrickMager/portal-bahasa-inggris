@@ -13,18 +13,6 @@
         }
     },
     {
-        "id": "std_002",
-        "nama_lengkap": "Budi Santoso1",
-        "nim": "2024010001",
-        "deskripsi": "",
-        "foto_profil": "",
-        "history_sekolah": {
-            "nama_sekolah": "",
-            "deskripsi_sekolah": "",
-            "logo_sekolah": ""
-        }
-    },
-    {
         "id": "std_003",
         "nama_lengkap": "Febrian alfarizzi",
         "nim": "2024010002",
