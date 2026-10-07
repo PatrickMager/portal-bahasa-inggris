@@ -24,18 +24,5 @@
             "deskripsi_sekolah": "",
             "logo_sekolah": "std_003_school_1791136989.webp"
         }
-    },
-    {
-        "id": "std_004",
-        "nama_lengkap": "hg",
-        "nim": "121",
-        "deskripsi": "",
-        "foto_profil": "",
-        "history_sekolah": {
-            "nama_sekolah": "",
-            "link_sekolah": "",
-            "deskripsi_sekolah": "",
-            "logo_sekolah": ""
-        }
     }
 ]
