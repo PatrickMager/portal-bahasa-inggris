@@ -1,20 +1,41 @@
-{
-    "web_title": "Universitas Negeri Yogyakarta",
-    "web_tagline": "Dashboard Tugas & Portofolio",
-    "web_subtitle": "Kelompok Bahasa Inggris",
-    "web_badge": "Electrical Engginering",
-    "web_logo": "web_logo_1790876671.webp",
-    "web_description": "Platform kolaborasi tugas dan portofolio akademik mahasiswa. Menyajikan profil lengkap seluruh anggota tim serta rekapitulasi berkas tugas kelompok dan individu secara terintegrasi.",
-    "program_studi": "Teknik Elektro",
-    "mata_kuliah": "Bahasa Inggris",
-    "topik_utama": "Presentation & Academic Essay",
-    "format_tugas": "Google Drive, YouTube, Cloud Link",
-    "kelas": "Kelas B",
-    "tahun_akademik": "2026/2025",
-    "card_matakuliah_title": "Mata Kuliah Bahasa Inggris",
-    "card_matakuliah_desc": "Mencakup penulisan esai akademis, analisis jurnal, dan penyusunan slide presentasi kelompok secara profesional.",
-    "card_arsip_title": "Arsip Berkas Digital",
-    "card_arsip_desc": "Setiap dokumen kelompok dan individu tersimpan aman di server dan dapat langsung diunduh sewaktu-waktu.",
-    "card_pendidikan_title": "Riwayat Pendidikan",
-    "card_pendidikan_desc": "Menampilkan jejak sekolah menengah dan latar belakang pendidikan asal masing-masing anggota mahasiswa."
-}
+[
+    {
+        "id": "std_001",
+        "nama_lengkap": "Febrian alfarizzi",
+        "nim": "25090520047",
+        "deskripsi": "Hai",
+        "foto_profil": "std_001_profile_1790876274.webp",
+        "history_sekolah": {
+            "nama_sekolah": "SMAN 1 Jakenan",
+            "deskripsi_sekolah": "TOP",
+            "logo_sekolah": "",
+            "link_sekolah": "https:\/\/sman1jakenan.sch.id"
+        }
+    },
+    {
+        "id": "std_003",
+        "nama_lengkap": "Febrian alfarizzi",
+        "nim": "2024010002",
+        "deskripsi": "",
+        "foto_profil": "std_003_profile_1791136940.webp",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": "std_003_school_1791136989.webp"
+        }
+    },
+    {
+        "id": "std_004",
+        "nama_lengkap": "hg",
+        "nim": "121",
+        "deskripsi": "",
+        "foto_profil": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    }
+]
