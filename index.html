@@ -63,8 +63,8 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="css/style.css?v=7.0">
-    <script src="js/app.js?v=7.0"></script>
+    <link rel="stylesheet" href="css/style.css?v=8.0">
+    <script src="js/app.js?v=8.0"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body x-data="landingApp()" class="bg-slate-50 dark:bg-[#0f172a] font-sans text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-300">
@@ -513,7 +513,7 @@
                      }">
                     <template x-for="student in students" :key="student.id">
                         <a :href="'detail.html?id=' + encodeURIComponent(student.id)"
-                           class="group bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-500 shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden hover:-translate-y-1 virtual-render">
+                           class="group bg-white dark:bg-slate-800/90 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-500 shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden hover:-translate-y-1">
                             
                             <!-- Banner Atas Card -->
                             <div>
