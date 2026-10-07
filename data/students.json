@@ -24,5 +24,18 @@
             "deskripsi_sekolah": "",
             "logo_sekolah": "std_003_school_1791136989.jpeg"
         }
+    },
+    {
+        "id": "std_004",
+        "nama_lengkap": "Galang Gacor 88",
+        "nim": "250905263888",
+        "deskripsi": "Ini cuma tes aja",
+        "foto_profil": "std_004_profile_1791387184.jpg",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
     }
 ]
