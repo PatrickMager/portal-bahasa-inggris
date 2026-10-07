@@ -9,7 +9,20 @@
             "nama_sekolah": "SMAN 1 Jakenan",
             "deskripsi_sekolah": "TOP",
             "logo_sekolah": "",
-            "link_sekolah": "https:\/\/sman1jakenan.sch.id"
+            "link_sekolah": "https://sman1jakenan.sch.id"
+        }
+    },
+    {
+        "id": "std_002",
+        "nama_lengkap": "we",
+        "nim": "32",
+        "deskripsi": "",
+        "foto_profil": "std_002_profile_1791394753.jpg",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
         }
     }
 ]
