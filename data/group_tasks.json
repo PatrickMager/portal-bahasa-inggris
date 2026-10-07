@@ -12,5 +12,12 @@
         "link_tugas": "https:\/\/www.youtube.com\/",
         "sumber_link": "youtube",
         "tanggal_upload": "2026-10-07 18:06:46"
+    },
+    {
+        "id": "gt_003",
+        "judul_tugas": "Galang gacor",
+        "link_tugas": "https:\/\/gilang.vercel.app",
+        "sumber_link": "link",
+        "tanggal_upload": "2026-10-07 22:34:10"
     }
 ]
