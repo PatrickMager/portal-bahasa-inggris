@@ -63,8 +63,8 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="css/style.css?v=7.0">
-    <script src="js/app.js?v=7.0"></script>
+    <link rel="stylesheet" href="css/style.css?v=8.0">
+    <script src="js/app.js?v=8.0"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body x-data="groupTasksApp()" class="bg-slate-50 dark:bg-[#0f172a] font-sans text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-300">
@@ -405,7 +405,7 @@
                 <div x-show="filteredTasks.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
                         <div @click="window.open(task.parsed ? task.parsed.originalUrl : task.link_tugas, '_blank')"
-                             class="virtual-render bg-white dark:bg-slate-800/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600/50 transition flex flex-col justify-between cursor-pointer group">
+                             class="bg-white dark:bg-slate-800/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600/50 transition flex flex-col justify-between cursor-pointer group">
                             <div>
                                 <div class="flex items-start gap-3.5 sm:gap-4 mb-4">
                                     <!-- Thumbnail / Badge Icon Platform (Sama Seperti di Kolom Tugas Index) -->
