@@ -129,13 +129,72 @@
         }
     }
 
-    // Helper: Logo / Image URL
+    // Endpoint Live API Azure untuk Sinkronisasi Real-Time Instan (0 Detik)
+    const AZURE_BASE_URL = 'https://portal-bahasa-inggris-admin-d4cbgafthwhgexb0.indonesiacentral-01.azurewebsites.net';
+    const AZURE_API_ENDPOINT = AZURE_BASE_URL + '/api/data.php';
+    let currentUploadsUrl = 'uploads/images/';
+
+    // Helper: Logo / Image URL (Mendukung Live URL dari Azure & Fallback Lokal)
     function resolveImageUrl(filename) {
         if (!filename) return '';
         if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('data:')) {
             return filename;
         }
-        return 'uploads/images/' + filename;
+        return currentUploadsUrl + filename;
+    }
+
+    /**
+     * Universal Data Fetcher:
+     * 1. Prioritas Utama: Mengambil data real-time instan dari Live API Azure (0 Detik delay).
+     * 2. Fallback: Mengambil data static JSON dari GitHub Pages jika server Azure offline/istirahat.
+     */
+    async function fetchAllAppData() {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3500);
+            const liveRes = await fetch(AZURE_API_ENDPOINT + '?_=' + Date.now(), {
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (liveRes.ok) {
+                const json = await liveRes.json();
+                if (json && json.status === 'success' && json.data) {
+                    let upUrl = json.uploads_url || (AZURE_BASE_URL + '/uploads/images/');
+                    if (upUrl.startsWith('http://')) {
+                        upUrl = upUrl.replace(/^http:\/\//, 'https://');
+                    }
+                    currentUploadsUrl = upUrl;
+                    return {
+                        source: 'live_azure',
+                        settings: json.data.settings || null,
+                        students: Array.isArray(json.data.students) ? json.data.students : [],
+                        groupTasks: Array.isArray(json.data.group_tasks) ? json.data.group_tasks : [],
+                        individualTasks: Array.isArray(json.data.individual_tasks) ? json.data.individual_tasks : []
+                    };
+                }
+            }
+        } catch (e) {
+            // Live API Azure offline/sleep, gunakan fallback lokal
+        }
+
+        // Fallback ke Static JSON Lokal (GitHub Pages)
+        currentUploadsUrl = 'uploads/images/';
+        const ts = Date.now();
+        const [settRes, studRes, grpRes, indRes] = await Promise.all([
+            fetch('data/site_settings.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch('data/students.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch('data/group_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch('data/individual_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null)
+        ]);
+
+        return {
+            source: 'static_github',
+            settings: settRes || null,
+            students: Array.isArray(studRes) ? studRes : [],
+            groupTasks: Array.isArray(grpRes) ? grpRes : [],
+            individualTasks: Array.isArray(indRes) ? indRes : []
+        };
     }
 
     // Helper: Update Favicon Dinamis dari Logo Website yang Diupload
@@ -256,35 +315,28 @@
 
             async loadData() {
                 try {
-                    const ts = Date.now();
-                    const [settRes, studRes, grpRes, indRes] = await Promise.all([
-                        fetch('data/site_settings.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/students.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/group_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/individual_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null)
-                    ]);
+                    const result = await fetchAllAppData();
 
-                    if (settRes && typeof settRes === 'object') {
-                        this.settings = Object.assign({}, DEFAULT_SETTINGS, settRes);
-                        try {
-                            localStorage.setItem('site_settings', JSON.stringify(this.settings));
-                        } catch (e) {}
+                    if (result.settings && typeof result.settings === 'object') {
+                        this.settings = Object.assign({}, DEFAULT_SETTINGS, result.settings);
+                        try { localStorage.setItem('site_settings', JSON.stringify(this.settings)); } catch (e) {}
                     }
                     updateFavicon(this.settings.web_logo);
-                    if (Array.isArray(studRes)) {
-                        this.students = studRes;
-                        try { localStorage.setItem('students_cache', JSON.stringify(studRes)); } catch (e) {}
+
+                    if (Array.isArray(result.students)) {
+                        this.students = result.students;
+                        try { localStorage.setItem('students_cache', JSON.stringify(result.students)); } catch (e) {}
                     }
-                    if (Array.isArray(grpRes)) {
-                        this.groupTasks = grpRes;
-                        try { localStorage.setItem('group_tasks_cache', JSON.stringify(grpRes)); } catch (e) {}
+                    if (Array.isArray(result.groupTasks)) {
+                        this.groupTasks = result.groupTasks;
+                        try { localStorage.setItem('group_tasks_cache', JSON.stringify(result.groupTasks)); } catch (e) {}
                     }
-                    if (Array.isArray(indRes)) {
-                        this.individualTasks = indRes;
-                        try { localStorage.setItem('individual_tasks_cache', JSON.stringify(indRes)); } catch (e) {}
+                    if (Array.isArray(result.individualTasks)) {
+                        this.individualTasks = result.individualTasks;
+                        try { localStorage.setItem('individual_tasks_cache', JSON.stringify(result.individualTasks)); } catch (e) {}
                     }
                 } catch (err) {
-                    console.warn('Gagal memuat data JSON:', err);
+                    console.warn('Gagal memuat data:', err);
                 }
 
                 this.totalTasks = this.groupTasks.length + this.individualTasks.length;
@@ -413,35 +465,29 @@
 
             async loadData() {
                 try {
-                    const ts = Date.now();
-                    const [settRes, studRes, grpRes, indRes] = await Promise.all([
-                        fetch('data/site_settings.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/students.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/group_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/individual_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null)
-                    ]);
+                    const result = await fetchAllAppData();
 
-                    if (settRes && typeof settRes === 'object') {
-                        this.settings = Object.assign({}, DEFAULT_SETTINGS, settRes);
+                    if (result.settings && typeof result.settings === 'object') {
+                        this.settings = Object.assign({}, DEFAULT_SETTINGS, result.settings);
                         try {
                             localStorage.setItem('site_settings', JSON.stringify(this.settings));
                         } catch (e) {}
                     }
                     updateFavicon(this.settings.web_logo);
-                    if (Array.isArray(studRes)) {
-                        this.students = studRes;
-                        try { localStorage.setItem('students_cache', JSON.stringify(studRes)); } catch (e) {}
+                    if (Array.isArray(result.students)) {
+                        this.students = result.students;
+                        try { localStorage.setItem('students_cache', JSON.stringify(result.students)); } catch (e) {}
                     }
-                    if (Array.isArray(grpRes)) {
-                        this.groupTasks = grpRes;
-                        try { localStorage.setItem('group_tasks_cache', JSON.stringify(grpRes)); } catch (e) {}
+                    if (Array.isArray(result.groupTasks)) {
+                        this.groupTasks = result.groupTasks;
+                        try { localStorage.setItem('group_tasks_cache', JSON.stringify(result.groupTasks)); } catch (e) {}
                     }
-                    if (Array.isArray(indRes)) {
-                        this.individualTasks = indRes;
-                        try { localStorage.setItem('individual_tasks_cache', JSON.stringify(indRes)); } catch (e) {}
+                    if (Array.isArray(result.individualTasks)) {
+                        this.individualTasks = result.individualTasks;
+                        try { localStorage.setItem('individual_tasks_cache', JSON.stringify(result.individualTasks)); } catch (e) {}
                     }
                 } catch (err) {
-                    console.warn('Gagal memuat data JSON:', err);
+                    console.warn('Gagal memuat data:', err);
                 }
             },
 
@@ -576,35 +622,32 @@
 
             async loadData() {
                 try {
-                    const ts = Date.now();
-                    const [settRes, studRes, grpRes] = await Promise.all([
-                        fetch('data/site_settings.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/students.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch('data/group_tasks.json?_=' + ts).then(r => r.ok ? r.json() : null).catch(() => null)
-                    ]);
+                    const result = await fetchAllAppData();
 
-                    if (settRes && typeof settRes === 'object') {
-                        this.settings = Object.assign({}, DEFAULT_SETTINGS, settRes);
+                    if (result.settings && typeof result.settings === 'object') {
+                        this.settings = Object.assign({}, DEFAULT_SETTINGS, result.settings);
                         try {
                             localStorage.setItem('site_settings', JSON.stringify(this.settings));
                         } catch (e) {}
                     }
                     updateFavicon(this.settings.web_logo);
-                    if (Array.isArray(studRes)) {
-                        this.students = studRes;
-                        try { localStorage.setItem('students_cache', JSON.stringify(studRes)); } catch (e) {}
+                    if (Array.isArray(result.students)) {
+                        this.students = result.students;
+                        try { localStorage.setItem('students_cache', JSON.stringify(result.students)); } catch (e) {}
                     }
-                    if (Array.isArray(grpRes)) {
-                        try { localStorage.setItem('group_tasks_cache', JSON.stringify(grpRes)); } catch (e) {}
-                        this.groupTasks = grpRes.map(t => ({
+                    if (Array.isArray(result.groupTasks)) {
+                        try { localStorage.setItem('group_tasks_cache', JSON.stringify(result.groupTasks)); } catch (e) {}
+                        this.groupTasks = result.groupTasks.map(t => ({
                             ...t,
                             parsed: parseCloudLink(t.link_tugas),
                             formattedDate: formatDate(t.tanggal_upload)
                         }));
                     }
                 } catch (err) {
-                    console.warn('Gagal memuat data JSON:', err);
+                    console.warn('Gagal memuat data:', err);
                 }
+                this.calculateStats();
+                this.updateFilteredTasks();
             },
 
             calculateStats() {
