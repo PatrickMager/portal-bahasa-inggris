@@ -28,11 +28,13 @@
 
     <!-- Script Pencegah Flashbang Mode Gelap -->
     <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        try {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        } catch (e) {}
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -61,8 +63,8 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="css/style.css?v=6.0">
-    <script src="js/app.js?v=6.0"></script>
+    <link rel="stylesheet" href="css/style.css?v=7.0">
+    <script src="js/app.js?v=7.0"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body x-data="landingApp()" class="bg-slate-50 dark:bg-[#0f172a] font-sans text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-300">
