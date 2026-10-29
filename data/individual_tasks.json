@@ -30,5 +30,13 @@
         "sumber_link": "drive",
         "tanggal_upload": "2026-10-29",
         "student_id": "std_006"
+    },
+    {
+        "id": "it_005",
+        "judul_tugas": "CV",
+        "link_tugas": "https://drive.google.com/file/d/1AmeblBdo1Bs-Eie4BESJovIIQJSaOJFj/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-29",
+        "student_id": "std_005"
     }
 ]
