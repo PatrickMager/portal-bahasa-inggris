@@ -1,1 +1,30 @@
-[]
+[
+    {
+        "id": "gt_001",
+        "judul_tugas": "Team assignment 1 UNIT 6",
+        "link_tugas": "https://drive.google.com/file/d/1viYkNnxR-PjmBlAje2viMf51LYQSKAQ-/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-09-11"
+    },
+    {
+        "id": "gt_002",
+        "judul_tugas": "Team assignment 2 UNIT 4",
+        "link_tugas": "https://drive.google.com/file/d/1NBg-zwCXYCt8KZuWElQtYeVMUhGSwLqx/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-02"
+    },
+    {
+        "id": "gt_003",
+        "judul_tugas": "Video team assignment 2 UNIT 4",
+        "link_tugas": "https://drive.google.com/file/d/1EMUoifOlqoKfyGmwDkQ-jZIKvz6E86FS/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-02"
+    },
+    {
+        "id": "gt_004",
+        "judul_tugas": "Team assignment 3 UNIT 8",
+        "link_tugas": "https://drive.google.com/file/d/1BanfBdbzvyDWvUqA5udwyoDQvJXXj1Tu/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-16"
+    }
+]
