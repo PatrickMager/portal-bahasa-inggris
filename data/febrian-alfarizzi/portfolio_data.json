@@ -66,6 +66,13 @@
             "tipe": "url",
             "nilai": "https://linkedin.com/",
             "ikon": "linkedin"
+        },
+        {
+            "namaPlatform": "Social Media",
+            "label": "Instagram Profile",
+            "tipe": "url",
+            "nilai": "https://instagram.com/_Albriann_",
+            "ikon": "instagram"
         }
     ]
 }
