@@ -1,1 +1,105 @@
-[]
+[
+    {
+        "id": "std_001",
+        "tipe": "external",
+        "nama_lengkap": "Pedro Elloice Valenthino Putranado",
+        "nim": "25090520004",
+        "link": "https://sites.google.com/view/fluxengineers/pedro-elloice-valenthino-putranado",
+        "embed_code": "",
+        "deskripsi": "",
+        "foto_profil": "std_profile_1793273966_811.webp",
+        "foto_banner": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    },
+    {
+        "id": "std_002",
+        "tipe": "external",
+        "nama_lengkap": "Khoirun Nisa Zahratuljannah",
+        "nim": "25090520006",
+        "link": "https://sites.google.com/view/fluxengineers/khoirun-nisa-zahratuljannah",
+        "embed_code": "",
+        "deskripsi": "",
+        "foto_profil": "std_profile_1793274159_391.webp",
+        "foto_banner": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    },
+    {
+        "id": "std_004",
+        "tipe": "external",
+        "nama_lengkap": "Fahreza Efendi",
+        "nim": "25090520010",
+        "link": "https://sites.google.com/view/fluxengineers/fahreza-efendi",
+        "embed_code": "",
+        "deskripsi": "",
+        "foto_profil": "std_profile_1793274265_253.webp",
+        "foto_banner": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    },
+    {
+        "id": "std_007",
+        "tipe": "external",
+        "nama_lengkap": "Pasha Ibnu Wibowo",
+        "nim": "25090520031",
+        "link": "https://sites.google.com/view/fluxengineers/pasha-ibnu-wibowo",
+        "embed_code": "",
+        "deskripsi": "",
+        "foto_profil": "std_profile_1793275286_694.webp",
+        "foto_banner": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    },
+    {
+        "id": "std_005",
+        "tipe": "manual",
+        "nama_lengkap": "Febrian Alfarizzi",
+        "nim": "25090520047",
+        "link": "/data/febrian-alfarizzi/index.html",
+        "embed_code": "",
+        "deskripsi": "",
+        "foto_profil": "std_profile_1793274384_639.webp",
+        "foto_banner": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        },
+        "deskripsi_alignment": "text-justify"
+    },
+    {
+        "id": "std_006",
+        "tipe": "manual",
+        "nama_lengkap": "Galang Lindu Aji",
+        "nim": "25090520049",
+        "link": "",
+        "embed_code": "",
+        "deskripsi": "",
+        "foto_profil": "std_profile_1793274612_152.webp",
+        "foto_banner": "",
+        "history_sekolah": {
+            "nama_sekolah": "",
+            "link_sekolah": "",
+            "deskripsi_sekolah": "",
+            "logo_sekolah": ""
+        }
+    }
+]
