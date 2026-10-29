@@ -1,1 +1,26 @@
-[]
+[
+    {
+        "id": "it_001",
+        "judul_tugas": "Explain the tools for my friends to drawing",
+        "link_tugas": "https://drive.google.com/file/d/14UYn9CfXA0T0HK5TuyGaRO433v0r7PbO/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-16",
+        "student_id": "std_001"
+    },
+    {
+        "id": "it_002",
+        "judul_tugas": "Challenging",
+        "link_tugas": "https://drive.google.com/file/d/1MNFE0zpcDt-ij4Yu6YAf2-nRpAnBgqpx/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-09",
+        "student_id": "std_004"
+    },
+    {
+        "id": "it_003",
+        "judul_tugas": "CV Fahreza",
+        "link_tugas": "https://drive.google.com/file/d/1VknzfGibX4fXTptufPapa5FvKknQl6iN/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-29",
+        "student_id": "std_004"
+    }
+]
