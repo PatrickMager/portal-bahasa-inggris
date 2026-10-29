@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Preview - English Dashboard</title>
+
+    <!-- Script Pencegah Flashbang Mode Gelap -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 4px; }
+    </style>
+</head>
+<body class="h-full bg-slate-900 text-slate-100 flex flex-col font-sans overflow-hidden">
+
+    <!-- HEADER / TOOLBAR ATAS RINGAN -->
+    <header class="h-14 sm:h-16 flex-shrink-0 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-30 px-3 sm:px-6 flex items-center justify-between gap-3 shadow-md">
+        
+        <!-- Sisi Kiri: Tombol Kembali & Judul Berkas -->
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <button onclick="handleGoBack()" title="Back to Previous Page"
+                    class="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition cursor-pointer border border-slate-700/80 shadow-xs flex-shrink-0">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span class="hidden sm:inline">Back</span>
+            </button>
+
+            <div class="h-6 w-px bg-slate-800 hidden sm:block"></div>
+
+            <div class="min-w-0 flex-1">
+                <h1 id="task-title" class="text-xs sm:text-sm font-bold text-white truncate">
+                    Loading Preview...
+                </h1>
+                <div class="flex items-center gap-2 text-[10px] sm:text-xs text-slate-400 mt-0.5">
+                    <span id="task-badge" class="inline-flex items-center gap-1 font-semibold text-emerald-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span id="task-provider-label">Google Drive</span>
+                    </span>
+                    <span class="text-slate-400 hidden xs:inline">Layar Penuh Bebas Login</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sisi Kanan: Tombol Buka Tab Asli & Dark Mode -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <a id="external-link" href="#" target="_blank" rel="noopener noreferrer" 
+               class="py-1.5 px-2.5 sm:px-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+               title="Buka Tautan Luar di Google Drive">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                </svg>
+                <span class="hidden sm:inline">Buka Dokumen Asli</span>
+                <span class="sm:hidden">Asli</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- CONTAINER VIEWER FULLSCREEN (100% BEBAS LAG, BEBAS HANG, BEBAS CRASH) -->
+    <main class="flex-1 w-full h-full relative bg-slate-950 overflow-hidden">
+        <!-- Loading State Indicator -->
+        <div id="loading-state" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950 z-10 transition-opacity duration-300">
+            <div class="w-10 h-10 border-3 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
+            <p class="text-xs text-slate-400 font-medium">Connecting document preview...</p>
+        </div>
+
+        <!-- Iframe Viewer Bersih -->
+        <iframe id="preview-iframe" 
+                class="w-full h-full border-0 absolute inset-0 block"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+        </iframe>
+    </main>
+
+    <script>
+        function handleGoBack() {
+            const params = new URLSearchParams(window.location.search);
+            const taskType = params.get('type') || 'group';
+            const fallbackUrl = (taskType === 'individual') ? (window.currentTaskStudentId ? ('detail.html?id=' + encodeURIComponent(window.currentTaskStudentId)) : 'index.html') : 'group_tasks.html';
+
+            if (window.history.length > 1 && document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+                window.history.back();
+                setTimeout(() => {
+                    if (!document.hidden) {
+                        window.location.href = document.referrer || fallbackUrl;
+                    }
+                }, 300);
+            } else if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = fallbackUrl;
+            }
+        }
+
+        function parseDriveUrl(url) {
+            if (!url) return null;
+            const str = url.trim();
+            const driveMatch = str.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || str.match(/id=([a-zA-Z0-9_-]+)/);
+            if (driveMatch) {
+                const fid = driveMatch[1];
+                return {
+                    provider: 'Google Drive',
+                    embedUrl: 'https://drive.google.com/file/d/' + fid + '/preview',
+                    rawUrl: str
+                };
+            }
+            const ytMatch = str.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]+)/);
+            if (ytMatch) {
+                return {
+                    provider: 'YouTube',
+                    embedUrl: 'https://www.youtube-nocookie.com/embed/' + ytMatch[1] + '?autoplay=1&rel=0',
+                    rawUrl: str
+                };
+            }
+            return {
+                provider: 'Cloud Document',
+                embedUrl: str,
+                rawUrl: str
+            };
+        }
+
+        async function initPreview() {
+            const params = new URLSearchParams(window.location.search);
+            const taskId = params.get('id');
+            const taskType = params.get('type') || 'group';
+            const rawUrl = params.get('url');
+            const titleParam = params.get('title');
+
+            const titleEl = document.getElementById('task-title');
+            const badgeEl = document.getElementById('task-provider-label');
+            const iframeEl = document.getElementById('preview-iframe');
+            const extLinkEl = document.getElementById('external-link');
+            const loadingEl = document.getElementById('loading-state');
+
+            iframeEl.onload = function() {
+                if (loadingEl) {
+                    loadingEl.style.opacity = '0';
+                    setTimeout(() => { loadingEl.style.display = 'none'; }, 300);
+                }
+            };
+
+            // 1. Jika URL diberikan langsung via parameter
+            if (rawUrl) {
+                const parsed = parseDriveUrl(rawUrl);
+                titleEl.textContent = titleParam || 'Task Preview';
+                badgeEl.textContent = parsed.provider;
+                extLinkEl.href = parsed.rawUrl;
+                iframeEl.src = parsed.embedUrl;
+                document.title = (titleParam || 'Pratinjau') + ' - English Dashboard';
+                return;
+            }
+
+            // 2. Jika Task ID diberikan, cari dari JSON
+            if (taskId) {
+                try {
+                    const jsonFile = (taskType === 'individual') ? 'data/individual_tasks.json' : 'data/group_tasks.json';
+                    const res = await fetch(jsonFile + '?_=' + Date.now());
+                    if (res.ok) {
+                        const tasks = await res.json();
+                        const task = tasks.find(t => t.id === taskId);
+                        if (task) {
+                            const parsed = parseDriveUrl(task.link_tugas);
+                            titleEl.textContent = task.judul_tugas || 'Task Preview';
+                            badgeEl.textContent = parsed.provider;
+                            extLinkEl.href = parsed.rawUrl;
+                            iframeEl.src = parsed.embedUrl;
+                            document.title = task.judul_tugas + ' - English Dashboard';
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Gagal memuat task JSON:', e);
+                }
+            }
+
+            // Fallback jika tidak ada data
+            titleEl.textContent = 'Berkas Dokumen Tugas';
+            iframeEl.src = 'about:blank';
+            if (loadingEl) loadingEl.innerHTML = '<p class="text-sm text-rose-400 font-bold">Berkas tidak ditemukan atau tautan tidak valid.</p>';
+        }
+
+        document.addEventListener('DOMContentLoaded', initPreview);
+    </script>
+</body>
+</html>
+

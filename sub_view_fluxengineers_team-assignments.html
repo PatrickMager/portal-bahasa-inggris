@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=group_tasks.html">
+    <title>Mengalihkan ke Arsip Tugas Kelompok...</title>
+    <script>
+        (function() {
+            var target = 'group_tasks.html';
+            if (window.parent && window.parent !== window) {
+                try {
+                    window.parent.postMessage({ type: 'engspace-navigate-group-tasks', url: target }, '*');
+                } catch(e) {}
+            }
+            if (window.top && window.top !== window) {
+                try {
+                    window.top.location.href = target;
+                    return;
+                } catch(e) {}
+            }
+            window.location.href = target;
+        })();
+    </script>
+</head>
+<body style="font-family:Inter,system-ui,sans-serif;margin:0;padding:2rem;background:#0f172a;color:#f8fafc;display:flex;align-items:center;justify-content:center;height:100vh;box-sizing:border-box;">
+    <div style="background:rgba(30,41,59,0.8);border:1px solid rgba(51,65,85,0.8);border-radius:1rem;padding:2rem;text-align:center;max-width:400px;">
+        <h3 style="margin-top:0;font-size:1.125rem;">Mengalihkan ke Halaman Tugas Kelompok...</h3>
+        <p style="color:#94a3b8;font-size:0.875rem;">Mohon tunggu sebentar, Anda sedang dialihkan.</p>
+        <a href="group_tasks.html" target="_top" style="display:inline-block;margin-top:1rem;padding:0.6rem 1.25rem;background:#4f46e5;color:#fff;border-radius:0.5rem;text-decoration:none;font-weight:600;font-size:0.875rem;">Buka Halaman Tugas Kelompok</a>
+    </div>
+</body>
+</html>
