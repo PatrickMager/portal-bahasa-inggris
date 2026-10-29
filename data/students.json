@@ -92,14 +92,15 @@
         "nim": "25090520049",
         "link": "",
         "embed_code": "",
-        "deskripsi": "",
+        "deskripsi": "Electrical Engineering",
         "foto_profil": "std_profile_1793274612_152.webp",
         "foto_banner": "",
         "history_sekolah": {
-            "nama_sekolah": "",
-            "link_sekolah": "",
-            "deskripsi_sekolah": "",
-            "logo_sekolah": ""
-        }
+            "nama_sekolah": "SMAN 1 PRAMBANAN",
+            "link_sekolah": "https://www.sma1prambanan.sch.id",
+            "deskripsi_sekolah": "Sekolah Adiwiyata",
+            "logo_sekolah": "std_006_school_1793287918_894.webp"
+        },
+        "deskripsi_alignment": "text-justify"
     }
 ]
