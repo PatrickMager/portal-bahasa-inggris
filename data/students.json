@@ -50,7 +50,8 @@
             "link_sekolah": "",
             "deskripsi_sekolah": "",
             "logo_sekolah": ""
-        }
+        },
+        "deskripsi_alignment": "text-justify"
     },
     {
         "id": "std_007",
@@ -77,14 +78,14 @@
         "nim": "25090520047",
         "link": "/data/febrian-alfarizzi/index.html",
         "embed_code": "",
-        "deskripsi": "",
+        "deskripsi": "Electrical Engineering",
         "foto_profil": "std_profile_1793274384_639.webp",
         "foto_banner": "",
         "history_sekolah": {
-            "nama_sekolah": "",
-            "link_sekolah": "",
-            "deskripsi_sekolah": "",
-            "logo_sekolah": ""
+            "nama_sekolah": "SMAN 1 Jakenan",
+            "link_sekolah": "smanja.sch.id",
+            "deskripsi_sekolah": "Sekolah Adiwiyata",
+            "logo_sekolah": "std_005_school_sma.webp"
         },
         "deskripsi_alignment": "text-justify"
     },
