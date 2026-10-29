@@ -42,14 +42,14 @@
     ],
     "tugas": [
         {
-            "id": "it_002",
-            "judul": "Technical English Essay",
+            "id": "it_005",
+            "judul": "CV Febrian",
             "deskripsi": "An academic essay detailing the transition to renewable energy systems.",
             "deskripsiAlignment": "text-justify",
             "kategoriIkon": "dokumen",
             "pathIcon": "",
-            "teksTombol": "View Essay",
-            "linkTugas": "https://drive.google.com/file/d/1viYkNnxR-PjmBlAje2viMf51LYQSKAQ-/preview"
+            "teksTombol": "Open CV",
+            "linkTugas": "https://drive.google.com/file/d/1AmeblBdo1Bs-Eie4BESJovIIQJSaOJFj/preview"
         }
     ],
     "kontak": [
