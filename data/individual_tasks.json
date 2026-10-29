@@ -54,5 +54,13 @@
         "sumber_link": "drive",
         "tanggal_upload": "2026-10-29",
         "student_id": "std_002"
+    },
+    {
+        "id": "it_008",
+        "judul_tugas": "CV Pasha",
+        "link_tugas": "https://drive.google.com/file/d/1L1egxS6itg_GvqptvYRSeJpTwApJLDnf/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-29",
+        "student_id": "std_007"
     }
 ]
