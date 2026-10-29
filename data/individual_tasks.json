@@ -46,5 +46,13 @@
         "sumber_link": "drive",
         "tanggal_upload": "2026-10-29",
         "student_id": "std_001"
+    },
+    {
+        "id": "it_007",
+        "judul_tugas": "CV  khoirun nisa",
+        "link_tugas": "https://drive.google.com/file/d/1wGD4bofEPAALhLk-kNyTrQYz2eLU8Ua9/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-29",
+        "student_id": "std_002"
     }
 ]
