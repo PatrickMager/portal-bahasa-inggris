@@ -38,5 +38,13 @@
         "sumber_link": "drive",
         "tanggal_upload": "2026-10-29",
         "student_id": "std_005"
+    },
+    {
+        "id": "it_006",
+        "judul_tugas": "Curriculum Vitae",
+        "link_tugas": "https://drive.google.com/file/d/18lPlYveHc_EDNiW922sDsltTWKBSAFgx/preview",
+        "sumber_link": "drive",
+        "tanggal_upload": "2026-10-29",
+        "student_id": "std_001"
     }
 ]
