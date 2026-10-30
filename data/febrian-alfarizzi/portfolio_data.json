@@ -38,6 +38,14 @@
             "pathLogo": "history school/university/uny.webp",
             "deskripsi": "Yogyakarta State University (Indonesian: Universitas Negeri Yogyakarta) is one of the most prestigious and leading public universities in Indonesia, located in the cultural and educational hub of Yogyakarta. Originally established on September 21, 1964, as the Institute of Teacher Education and Educational Sciences (IKIP Yogyakarta), the institution initially focused on training high-level educators and academic professionals. In 1999, it officially transformed into Yogyakarta State University (UNY), expanding its academic scope beyond education to encompass a wide range of science, technology, arts, and social science disciplines while preserving its strong educational heritage.",
             "deskripsiAlignment": "text-justify"
+        },
+        {
+            "jenjang": "High school",
+            "namaSekolah": "SMA Negeri 1 Jakenan",
+            "linkSekolah": "https://smanja.sch.id/",
+            "pathLogo": "history school/university/sma.webp",
+            "deskripsi": "I graduated from SMA Negeri 1 Jakenan with a focus on [Natural Sciences / Social Sciences], where I successfully balanced rigorous academic coursework with active organizational involvement. As a dedicated member of [the Student Council / Scout Movement / English Club], I cultivated robust leadership, communication, and event management skills by organizing school-wide programs and collaborating with diverse teams of students. My time at the institution not only shaped my academic competencies but also instilled a strong sense of responsibility and initiative that I bring to my professional career.",
+            "deskripsiAlignment": "text-justify"
         }
     ],
     "tugas": [
@@ -50,7 +58,7 @@
             "pathIcon": "",
             "teksTombol": "Open CV",
             "linkTugas": "https://drive.google.com/file/d/1AmeblBdo1Bs-Eie4BESJovIIQJSaOJFj/preview"
-        }
+        },
     ],
     "kontak": [
         {
